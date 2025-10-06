@@ -39,7 +39,7 @@ Unlike traditional SaaS knowledge management platforms, Rescribos puts you in co
 | **Data Sources** | Hacker News, arXiv, PDF, DOCX, Web scraping |
 | **Export Formats** | PDF, DOCX, Markdown, JSON, Excel |
 | **Deployment** | Desktop app, Docker, CLI, on-premises server |
-| **Pricing** | $29-$249/month, Enterprise custom |
+| **Pricing** | $150/year per seat ($129/year for 5+ seats), Enterprise custom |
 
 ## Who is Rescribos For?
 

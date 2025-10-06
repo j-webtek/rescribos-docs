@@ -56,9 +56,9 @@ Rescribos Data Refinement delivers value across different user segments with tai
 
 ### Key Benefits
 - Consistency: Standard analysis quality
-- Collaboration: Shared libraries and carts
+- Collaboration: Shared libraries and carts via export/import
 - Integration: Fits existing workflows
-- Scalability: 5-25 users per Team license
+- Scalability: Volume pricing for teams of 5+ users
 
 ---
 
@@ -151,17 +151,17 @@ Rescribos Data Refinement delivers value across different user segments with tai
 ### Cost Efficiency
 
 **Individual Researcher:**
-- License cost: $29/month ($348/year)
+- License cost: $150/year
 - OpenAI API: ~$10-$30/month (direct, no markup)
-- Total: ~$400-$700/year
+- Total: ~$270-$510/year
 - Time saved: 40 hours/week × 48 weeks = 1,920 hours/year
-- ROI: Massive (pays for itself in 1 day of saved time)
+- ROI: Massive (pays for itself in less than 1 day of saved time)
 
-**Team of 10:**
-- Team license: $249/month ($2,988/year)
-- OpenAI API: ~$100-$300/month across team
-- Total: ~$4,200-$6,600/year
-- Time saved: 400 hours/week × 48 weeks = 19,200 hours/year
+**Team of 5:**
+- Team licenses: 5 seats × $129/year = $645/year
+- OpenAI API: ~$50-$150/month across team
+- Total: ~$1,245-$2,445/year
+- Time saved: 200 hours/week × 48 weeks = 9,600 hours/year
 - ROI: 100x+ (assuming $50/hour analyst time)
 
 ### Competitive Advantages
@@ -210,7 +210,7 @@ Rescribos Data Refinement delivers value across different user segments with tai
 
 | Aspect | Custom Build | Rescribos |
 |--------|--------------|-----------|
-| Development cost | $50K-$200K+ | $29-$249/month |
+| Development cost | $50K-$200K+ | $150/year |
 | Time to deploy | 6-12 months | Same day |
 | Maintenance | Ongoing dev cost | Included in license |
 | Updates | Manual | Automatic |
@@ -222,10 +222,10 @@ Rescribos Data Refinement delivers value across different user segments with tai
 
 Ready to experience the Rescribos value proposition?
 
-1. **Try it free** - 14-day full-featured trial
+1. **Get licensed** - $150/year for complete access
 2. **Explore the docs** - Review [system architecture](../architecture/README.md)
 3. **See it in action** - Check [use cases](../use-cases/README.md)
 4. **Deploy** - Review [deployment options](../deployment/README.md)
-5. **Get support** - Professional support included from Individual tier up
+5. **Get support** - Professional support included with your license
 
 [Start with the System Architecture →](../architecture/README.md)

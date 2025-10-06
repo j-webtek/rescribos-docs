@@ -43,8 +43,5 @@ class LicenseManager {
 - **Minimal Data:** Only license key, machine ID, app version
 
 **License Types:**
-- **Trial:** 14-day full-featured evaluation
-- **Personal:** Single-user, 1 device
-- **Professional:** Single-user, 3 devices
-- **Team:** Multi-user, site license
+- **Rescribos Complete:** Single-user, 1 device per seat ($150/year, or $129/year for 5+ seats)
 - **Enterprise:** Unlimited users, custom deployment

@@ -108,17 +108,13 @@ This documentation is organized into the following sections:
 ## Support
 
 - **Community Forum** - All users
-- **Email Support** - Individual tier and above
-- **Chat Support** - Professional tier and above
-- **Dedicated Engineer** - Enterprise tier
+- **Email Support** - Rescribos Complete (48-hour response)
+- **Dedicated Engineer** - Enterprise tier (1-hour response)
 
 ## License
 
 Rescribos is available under flexible licensing tiers:
-- **Trial** - 14-day evaluation
-- **Individual** - $29/month
-- **Professional** - $79/month
-- **Team** - $249/month
+- **Rescribos Complete** - $150/year per seat (team pricing: $129/year for 5+ seats)
 - **Enterprise** - Custom pricing
 
 See [Licensing & Pricing](licensing/README.md) for complete details.
