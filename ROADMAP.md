@@ -21,9 +21,26 @@ The roadmap focuses on three strategic pillars:
 
 ### AI Providers
 ✅ **Hybrid AI System**
-- OpenAI (GPT-4, GPT-4o, GPT-4-turbo)
-- Ollama (Local LLMs: Llama 3.1, Mistral, etc.)
-- Offline transformer fallbacks
+
+**OpenAI (Cloud)**
+- **Primary**: GPT-4o (default, optimized for speed and cost)
+- **Supported**: GPT-4, GPT-4-turbo, GPT-3.5-turbo
+- **Note**: Platform is model-agnostic; newer models (like GPT-5 when available) work without code changes
+
+**Ollama (Local)**
+- **Framework**: Ollama for local model serving
+- **Supported Models**: Llama family only
+  - **Default**: llama3.2:8b (8 billion parameters, balanced performance)
+  - **Recommended alternatives**:
+    - llama3.2:3b (faster, lower resource usage)
+    - llama3.2:11b (higher quality, more resources)
+    - llama3.2:70b (best quality, significant resources required)
+    - llama3.1:8b, llama3.1:70b (previous generation, still supported)
+- **Embeddings**: nomic-embed-text (for semantic search)
+
+**Hybrid Mode**
+- Automatic provider selection based on availability
+- Fallback from Ollama to OpenAI if local model unavailable
 - Provider hot-swapping without workflow changes
 
 ### Intelligence Features

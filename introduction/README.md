@@ -19,7 +19,7 @@ Unlike rigid SaaS tools locked to specific data sources, Rescribos is a configur
 ## Differentiators
 
 - **Local-first architecture** – All content, embeddings, and reports are written to the operator’s filesystem under `storage/` and `reports/`.
-- **Provider flexibility** – Switch between OpenAI GPT-5, Ollama Llama 3.1, and transformer fallbacks without changing workflows.
+- **Provider flexibility** – Switch between OpenAI (GPT-4o, GPT-4), Ollama Llama models (3.2, 3.1), and transformer fallbacks without changing workflows.
 - **Verified pipeline** – Python scripts share one logging convention and emit structured progress events that the UI and CLI consume.
 - **Deep configurability** – Fine-grained environment variables, profiles, and cart presets allow tailored extractions and analyses.
 - **Full traceability** – Every report contains provenance metadata, raw story references, and citations for generated statements.

@@ -5,7 +5,7 @@ Rescribos uses a hybrid provider strategy so teams can switch between cloud-grad
 ## Provider Roles
 
 - **OpenAI (cloud)** – Default provider for summarisation and embedding generation when network access and API credits are available.
-- **Ollama (local)** – Executes the same prompts using models such as `llama3.1:8b` and `nomic-embed-text`. Ideal for air-gapped or privacy-sensitive deployments.
+- **Ollama (local)** – Executes the same prompts using Llama models such as `llama3.2:8b` (default), `llama3.1:8b`, and `nomic-embed-text` for embeddings. Ideal for air-gapped or privacy-sensitive deployments.
 - **Transformer fallbacks** – SentenceTransformers models offer last-resort embeddings when neither OpenAI nor Ollama is available.
 
 ## Selection Logic

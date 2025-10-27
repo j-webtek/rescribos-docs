@@ -8,7 +8,7 @@ Rescribos Data Refinement is a cross-platform desktop application that transform
 - **Flexible Data Ingestion** – Connect to any data source: APIs, RSS feeds, databases, document repositories, web scraping, or custom connectors
 - **Local-First Architecture** – All content, analysis, and reports stored on your infrastructure with optional cloud AI processing
 - **Bring-Your-Own-Keys Model** – Complete cost control and credential ownership; pay AI providers directly at cost
-- **Hybrid AI Execution** – Switch seamlessly between OpenAI GPT-5, Ollama Llama 3.1, or transformer-based fallbacks
+- **Hybrid AI Execution** – Switch seamlessly between OpenAI (GPT-4o, GPT-4), Ollama Llama models (3.2, 3.1), or transformer-based fallbacks
 - **AI-Powered Analysis Pipeline** – Automated summarization, relevance scoring, deduplication, clustering, and tag generation
 - **Semantic Knowledge Management** – Vector search, conversational AI assistant, and intelligent document discovery
 - **Enterprise Automation** – CLI tools, scheduling, and integration hooks for systematic workflows
