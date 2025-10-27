@@ -247,7 +247,7 @@ Assistant: [Performance comparison with metrics]
 # Chat behavior
 CHAT_HISTORY_LENGTH=6              # Conversation memory depth
 CHAT_USE_STREAMING=true            # Enable streaming responses
-CHAT_MODEL=gpt-5                   # AI model selection
+CHAT_MODEL=gpt-5                   # AI model selection (default)
 
 # Context retrieval
 CHAT_SIMILARITY_THRESHOLD=0.3      # Relevance threshold

@@ -23,9 +23,9 @@ The roadmap focuses on three strategic pillars:
 ✅ **Hybrid AI System**
 
 **OpenAI (Cloud)**
-- **Primary**: GPT-4o (default, optimized for speed and cost)
-- **Supported**: GPT-4, GPT-4-turbo, GPT-3.5-turbo
-- **Note**: Platform is model-agnostic; newer models (like GPT-5 when available) work without code changes
+- **Primary**: GPT-5 (default, latest model with enhanced reasoning)
+- **Supported**: GPT-4o, GPT-4, GPT-4-turbo, GPT-3.5-turbo
+- **Note**: Platform is model-agnostic; newer models work automatically without code changes
 
 **Ollama (Local)**
 - **Framework**: Ollama for local model serving
