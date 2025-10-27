@@ -1,102 +1,95 @@
-# Configuration
+# Configuration & Automation
 
-### 9.3 CLI Usage
+## Environment Management
 
-**Installation:**
+- `.env.example` lists every supported variable. Copy it to `.env` and adjust as needed.
+- Profiles stored in `.rescribosrc` override subsets of variables for specific workflows (for example, offline mode or staging credentials).
+- Inspect or edit values via the CLI:
+
 ```bash
-# Global installation
-npm install -g rescribos-cli
-
-# Verify installation
-rescribos --version
-# Output: 2.0.0
-
-# View help
-rescribos --help
+npm run cli -- config --show
+npm run cli -- config --set MAX_STORIES=250
+npm run cli -- profile list
+npm run cli -- profile default offline
 ```
 
-**Common Commands:**
+- Configuration is merged in this order: Configuration is merged in this order: CLI overrides -> selected profile -> `.env.local` -> `.env`..
+
+## CLI Highlights
+
 ```bash
-# Initialize configuration
-rescribos init
-
-# Configure OpenAI key
-rescribos config set OPENAI_API_KEY sk-...
-
-# Run full pipeline
-rescribos run --sources hackernews,arxiv --keywords "AI,machine learning"
+# Extract + analyse + thematic report
+npm run cli -- extract --max-stories 200
+npm run cli -- analyze --date 2025-10-10
+npm run cli -- thematic
 
 # Extract only
-rescribos extract --sources hackernews --max-stories 100
+npm run cli -- extract --sources hackernews,arxiv --max-stories 150
 
-# Analyze existing data
-rescribos analyze --input ./data/raw_stories.json --model gpt-4o
+# Analyse a saved dataset
+npm run cli -- analyze --file ./storage/extracted/documents_20251010.json
 
-# Generate thematic report
-rescribos thematic --report report_20250115
+# Export to PDF
+npm run cli -- export-pdf storage/reports/ai_report_2025-10-10.json --output ./exports/weekly.pdf
 
-# Search
-rescribos search "quantum computing" --limit 10
-
-# Export
-rescribos export --report latest --format pdf --output report.pdf
-
-# List reports
-rescribos list --sort date --limit 20
-
-# Chat mode (interactive)
-rescribos chat --report report_20250115
-
-# Delete old reports
-rescribos clean --older-than 30d
+# Search across analysed stories
+npm run cli -- search "foundation model licensing" --limit 15
 ```
 
-**Scheduled Execution (Cron):**
-```bash
-# Edit crontab
-crontab -e
+See `docs/cli.md` for the full command reference.
 
-# Add daily extraction at 9 AM
-0 9 * * * cd /home/user/rescribos && rescribos run --sources hackernews >> logs/daily.log 2>&1
+## Scheduling Examples
 
-# Weekly full analysis on Sunday at midnight
-0 0 * * 0 cd /home/user/rescribos && rescribos run --sources hackernews,arxiv --thematic >> logs/weekly.log 2>&1
+- **Cron (Linux/macOS)**
+
+```
+0 7 * * 1-5 cd /opt/ai-news-extractor && \
+  npm run cli -- extract --max-stories 200 && \
+  npm run cli -- analyze --date $(date +\%Y-\%m-\%d) && \
+  npm run cli -- export-pdf storage/reports/ai_report_$(date +\%Y-\%m-\%d).json \
+    --output /reports/daily.pdf
 ```
 
-**CI/CD Integration (GitHub Actions):**
+- **Windows Task Scheduler**
+  - Action: `powershell.exe`
+  - Arguments: `-Command "cd C:\ai-news-extractor; npm run cli -- extract --sources hackernews; npm run cli -- analyze --date (Get-Date -Format yyyy-MM-dd); npm run cli -- export-pdf storage/reports/ai_report_((Get-Date).ToString('yyyy-MM-dd')).json --output C:\reports\daily.pdf"`
+
+- **GitHub Actions (headless)**
+
 ```yaml
-name: Daily Research Digest
+name: Daily Digest
 
 on:
   schedule:
-    - cron: '0 9 * * *'  # 9 AM daily
+    - cron: '0 9 * * *'
 
 jobs:
-  generate-digest:
+  digest:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '18'
-
-      - name: Install Rescribos
-        run: npm install -g rescribos-cli
-
-      - name: Run extraction and analysis
+      - name: Install dependencies
+        run: |
+          npm install
+          npm run install-python
+      - name: Generate report
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          rescribos run \
-            --sources hackernews,arxiv \
-            --keywords "AI,machine learning,LLM" \
-            --output ./reports/
-
-      - name: Upload report artifact
-        uses: actions/upload-artifact@v3
+          npm run cli -- extract --max-stories 150
+          npm run cli -- analyze --date $(date +%Y-%m-%d)
+          npm run cli -- export-pdf storage/reports/ai_report_$(date +%Y-%m-%d).json --output ./reports/daily.pdf
+      - uses: actions/upload-artifact@v4
         with:
-          name: daily-digest
-          path: ./reports/latest.pdf
+          name: daily-report
+          path: reports/
 ```
+
+## Monitoring & Logs
+
+- Logs live under `logs/` (e.g., `extraction-*.log`, `analysis-*.log`, `provider-*.log`).
+- Tail logs with your preferred shell command (`tail -f logs/extraction-*.log` or `Get-Content -Wait`).
+- Automation results in `AUTOMATION_TESTING_REPORT.md` provide sample timings and failure signatures to monitor.

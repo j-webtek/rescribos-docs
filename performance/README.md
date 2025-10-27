@@ -1,44 +1,29 @@
 # Performance & Scalability
 
-### 10.1 Benchmark Results
+Benchmarking results are tracked in `AUTOMATION_TESTING_REPORT.md` and the built-in performance monitor (`lib/performance-monitor.js`). This section summarises typical behaviour and offers tuning tips.
 
-**Test Environment:**
-```
-CPU: Intel Core i7-12700 (12 cores, 20 threads)
-RAM: 32 GB DDR4-3200
-Storage: NVMe SSD (Samsung 980 Pro)
-OS: Windows 11 Pro
-Network: 1 Gbps fiber
-AI Provider: OpenAI GPT-4o
-```
+## Typical Pipeline Timing (reference run)
 
-**Pipeline Performance:**
+| Stage | Stories | Duration | Notes |
+|-------|---------|----------|-------|
+| Extraction | 300 | ~3 minutes | Dominated by network latency to Hacker News and arXiv. |
+| Analysis | 300 | ~12 minutes | GPT-5 latency; include retries for transient errors. |
+| Organisation | 300 | ~90 seconds | CPU-bound clustering and ranking. |
+| Synthesis | 150 | ~6 minutes | Depends on prompt profile and provider. |
 
-| Stage | Stories | Duration | CPU | Memory | Network |
-|-------|---------|----------|-----|--------|---------|
-| Extract | 500 | 3m 24s | 35% | 800 MB | 75 MB down |
-| Analyze | 500 | 11m 47s | 25% | 1.2 GB | 2 MB up/down |
-| Organize | 500 | 1m 12s | 70% | 500 MB | 0 MB |
-| Thematic | 200 (filtered) | 6m 33s | 20% | 600 MB | 1.5 MB up/down |
-| **Total** | **500** | **22m 56s** | **Avg 37%** | **Peak 1.2 GB** | **78.5 MB** |
+Peak memory stays under 1.5 GB for runs up to 500 stories on a modern laptop when embeddings are cached to SQLite.
 
-**Scaling Tests:**
+## Influencing Factors
 
-| Story Count | Total Time | Cost (OpenAI) | Peak Memory | Storage |
-|-------------|------------|---------------|-------------|---------|
-| 100 | 6m 15s | $0.23 | 650 MB | 2 MB |
-| 250 | 12m 42s | $0.58 | 900 MB | 5 MB |
-| 500 | 22m 56s | $1.12 | 1.2 GB | 10 MB |
-| 1,000 | 47m 31s | $2.34 | 2.1 GB | 22 MB |
-| 2,500 | 2h 8m | $5.89 | 3.8 GB | 58 MB |
+- **Provider latency** – Local models (Ollama) trade cost savings for longer processing times. Expect 1.5–2x slower analysis compared to GPT-5.
+- **Concurrency** – `EXTRA_FETCH_CONCURRENCY` and provider rate limits define how quickly extraction and AI calls complete.
+- **Caching** – Embedding caches reduce repeated costs for the same stories; disable them for pure benchmarking.
+- **Hardware** – SSD storage and 8+ GB RAM minimise contention during large runs.
 
-**Bottleneck Analysis:**
-- **Network I/O:** 20% (extraction phase)
-- **AI API calls:** 60% (analysis phase)
-- **CPU processing:** 15% (clustering phase)
-- **Disk I/O:** 5% (saving reports)
+## Monitoring Tools
 
-## Sections
+- `npm run cli -- perf` or the developer tools performance monitor show stage timings in real time.
+- `logs/performance-*.log` summarises run durations, provider usage, and cache hits.
+- `AUTOMATION_TESTING_REPORT.md` records end-to-end regression runs used in CI.
 
-- [Benchmarks](benchmarks.md)
-- [Optimization](optimization.md)
+For detailed measurements and reproducibility notes, see [Benchmarks](benchmarks.md). To tune performance further, continue to [Optimisation](optimization.md).

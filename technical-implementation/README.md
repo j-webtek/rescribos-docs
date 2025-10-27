@@ -1,79 +1,44 @@
-# Technical Implementation
+﻿# Technical Implementation
 
-### 7.1 Code Statistics
+This section provides an engineering-centric view of the codebase. It complements the deep dives in `docs/DEVELOPER_GUIDE_IPC_EVENTS.md`, `docs/DEVELOPER_GUIDE_TESTING.md`, and related guides.
 
-**Project Overview:**
-```
-Language                Files        Lines         Code     Comments       Blanks
-─────────────────────────────────────────────────────────────────────────────────
-JavaScript                 42        12,847       10,234        1,205        1,408
-Python                     28        18,562       14,892        2,108        1,562
-TypeScript                  8         3,421        2,845          312          264
-JSON                       12         1,847        1,847            0            0
-Markdown                    6         2,105            0        1,842          263
-YAML                        4           342          298           22           22
-Dockerfile                  2            98           72           18            8
-Shell                       3           267          198           35           34
-─────────────────────────────────────────────────────────────────────────────────
-Total                     105        39,489       30,386        5,542        3,561
-```
+## Repository Layout
 
-**Source Code Distribution:**
-```
-src/
-├── electron/              # Electron main process (Node.js)
-│   ├── main.js           # 847 lines - Application entry point
-│   ├── ipcHandlers.js    # 1,234 lines - IPC communication
-│   ├── licenseManager.js # 423 lines - License validation
-│   ├── keyManagement.js  # 198 lines - Secure key storage
-│   └── reportManager.js  # 567 lines - Report operations
-│
-├── renderer/              # Electron renderer process (frontend)
-│   ├── index.html        # 342 lines - Main UI structure
-│   ├── app.js            # 2,156 lines - UI logic and interactions
-│   ├── search.js         # 678 lines - Search interface
-│   ├── chat.js           # 892 lines - Chat UI and streaming
-│   └── styles.css        # 1,234 lines - Application styling
-│
-├── python/                # Python processing pipeline
-│   ├── extract.py        # 1,847 lines - Multi-source extraction
-│   ├── analyze.py        # 2,341 lines - AI analysis pipeline
-│   ├── organize.py       # 1,156 lines - Clustering and organization
-│   ├── thematic.py       # 3,421 lines - Thematic analysis engine
-│   ├── chat.py           # 892 lines - Interactive chat system
-│   ├── search.py         # 567 lines - Vector search
-│   ├── embeddings.py     # 743 lines - Embedding generation
-│   ├── ai_manager.py     # 1,234 lines - AI provider orchestration
-│   ├── openai_client.py  # 456 lines - OpenAI integration
-│   ├── ollama_client.py  # 378 lines - Ollama integration
-│   └── local_models.py   # 289 lines - Local fallback models
-│
-├── cli/                   # Command-line interface
-│   └── rescribos-cli.js  # 892 lines - CLI implementation
-│
-└── shared/                # Shared utilities
-    ├── config.js         # 234 lines - Configuration management
-    ├── logger.js         # 156 lines - Logging system
-    └── utils.py          # 421 lines - Python utilities
-```
+| Path | Purpose |
+|------|---------|
+| `src/` | Electron renderer assets, preload scripts, and UI logic. |
+| `lib/` | Node.js orchestration utilities (workflow manager, environment loader, secure storage). |
+| `scripts/` | Python processing pipeline (extraction, analysis, document processing, chat). |
+| `config/` | Data source definitions, prompt templates, and automation presets (CLI profiles are stored in `.rescribosrc`). |
+| `docker/` | Container definitions for headless and remote execution. |
+| `tests/` | Jest suites for JavaScript and pytest suites for Python. |
+| `storage/` | Generated outputs (extracted data, analysed data, reports, embeddings). |
 
-**Test Coverage:**
-```
-tests/
-├── unit/                  # 34 test files
-│   ├── test_extract.py   # 456 lines
-│   ├── test_analyze.py   # 623 lines
-│   └── test_ai_manager.py # 389 lines
-│
-└── integration/           # 12 test files
-    ├── test_pipeline.py  # 892 lines
-    └── test_exports.py   # 567 lines
+## Runtime Processes
 
-Total Test Lines: 4,567
-Code Coverage: 78%
-```
+1. **Renderer** - Runs in the Chromium context. Files `src/renderer.js`, `src/index.html`, and the resources under `src/results/` handle UI state, search, and cart interactions.
+2. **Main process** - Entry point `main.js` loads user configuration, wires IPC handlers, and launches Python workers via `child_process.spawn`.
+3. **Python workers** - Scripts in `scripts/` perform extraction (`extractor.py`), analysis (`analyzer.py`), chat (`full_context_chat.py`), and document processing (`document_processor.py`).
 
-## Sections
+IPC interactions between renderer and main are defined in `src/preload.js` and documented in `docs/DEVELOPER_GUIDE_IPC_EVENTS.md`.
+
+## Key Modules
+
+- `lib/workflow-manager.js` - Coordinates multi-stage jobs and ensures progress updates reach the UI.
+- `lib/env-loader.js` - Merges `.env`, profile files, and runtime overrides before launching Python processes.
+- `scripts/ai_providers/network_aware_manager.py` - Centralises provider selection and error handling for OpenAI, Ollama, and transformer fallbacks.
+- `scripts/ai_compatibility.py` - Helper utilities that normalise provider behaviour and expose shared fallbacks.
+- `scripts/cart_manager.py` / `scripts/cart_processor.py` - Persist and process cart selections into full analyses.
+- `scripts/document_processor.py` - Adds local PDF/DOCX/TXT ingestion.
+- `cli.js` - Exposes the automation interface (`npm run cli -- <command>`).
+
+## Testing & Quality
+
+- JavaScript tests run with `npm test` (Jest). Coverage focuses on configuration loaders, IPC validation, and CLI utilities.
+- Python tests run with `pytest` under the `tests/` directory and cover extraction, analysis, and AI manager behaviours.
+- Automation reports (`AUTOMATION_TESTING_REPORT.md`) track end-to-end reliability, while `CODE_QUALITY_DETAILED_ANALYSIS.md` documents linting and static analysis.
+
+Proceed to the following pages for component-specific details:
 
 - [Electron Frontend](electron-frontend.md)
 - [Node.js Backend](nodejs-backend.md)

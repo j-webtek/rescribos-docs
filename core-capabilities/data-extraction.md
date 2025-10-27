@@ -7,14 +7,15 @@ Rescribos automatically collects content from diverse sources, applying AI-drive
 **Supported Sources:**
 - **Hacker News** - Real-time tech news and discussions
 - **arXiv** - Academic papers with full metadata (DOI, authors, citations)
-- **Local Documents** - PDF, DOCX, TXT files
-- **Web Content** - Custom URL scraping with BeautifulSoup4
+- **Local Documents** - PDF, DOCX, and TXT files processed through the document pipeline
+- **Custom Connectors** - Generate REST/RSS/GraphQL plugins with `scripts/create_datasource.py`
+- **Web Content** - Article scraping for extracted URLs with BeautifulSoup4
 - **Browser Automation** - Playwright for JavaScript-heavy sites
 
 **Extraction Features:**
 - **Concurrent Processing** - 5-10 simultaneous requests with semaphore control
 - **Smart Filtering** - Keyword-based relevance with regex patterns
-- **Optional AI Screening** - GPT-4o pre-filtering for precision
+- **Optional AI Screening** - GPT-5 pre-filtering for precision
 - **Age-Based Filtering** - Configurable time windows (default: 36 hours)
 - **Duplicate Detection** - Hash-based deduplication across sources
 - **Error Recovery** - Exponential backoff with 3 retry attempts

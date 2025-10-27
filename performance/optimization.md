@@ -1,61 +1,34 @@
-# Optimization Features
+# Optimisation Strategies
 
-### 10.3 Optimization Features
+Rescribos ships with several optimisations to keep large runs responsive. Fine-tuning these settings can significantly reduce runtime and cost.
 
-**Optimization Techniques Summary:**
+## Extraction & Analysis
 
-| Technique | Implementation | Performance Gain |
-|-----------|---------------|------------------|
-| **Virtual Rendering** | Only render visible DOM rows (10-20 at a time) for large tables<br>Windowing with 60px row height, 5-row buffer | 10,000+ stories without lag<br>Constant memory, 60fps scrolling |
-| **Batch Processing** | Group 100 stories per API call for embeddings<br>Single request vs. 100 individual calls | 10x faster<br>Reduced API costs<br>Better rate limit utilization |
-| **Caching Strategy** | Hash-based embedding cache with 24-hour TTL<br>Check cache before API call | 80% cache hit rate<br>Avoid redundant processing<br>Significant cost savings |
-| **Parallel Processing** | AsyncIO with semaphore (max 10 concurrent workers)<br>Concurrent API calls with rate limiting | 5-10x faster than sequential<br>Multi-core CPU utilization |
+- **Concurrency control** – `EXTRA_FETCH_CONCURRENCY` and `AI_CONCURRENCY` (profile option) limit parallel requests. Increase gradually while monitoring API rate limits.
+- **Batch embeddings** – `EMBEDDING_BATCH_SIZE` defaults to 100 to respect provider quotas without sacrificing speed.
+- **Keyword filters** – Use `FILTER_KEYWORDS` and `EXCLUDE_KEYWORDS` to minimise irrelevant stories before costly AI analysis.
+- **Incremental runs** – `FORCE_REPROCESS=false` skips stories that have already been analysed, saving both time and cost.
 
-**Key Code Patterns:**
+## Caching
 
-```python
-# Batch processing pattern
-async def generate_embeddings_batch(stories, batch_size=100):
-    for batch in chunks(stories, batch_size):
-        embeddings = await openai_client.embeddings.create(
-            model='text-embedding-3-large',
-            input=[s['summary'] for s in batch]
-        )
-    return embeddings
+- Embeddings are cached in `storage/embeddings/embeddings.db`. Remove cached summaries with `npm run cli -- clear-cache` before benchmarking.
+- Document processing caches file hashes to avoid re-ingesting unchanged files.
+- The chat assistant stores recent prompts and responses locally to speed up follow-up questions.
 
-# Parallel processing pattern
-async def analyze_parallel(stories, max_workers=10):
-    semaphore = asyncio.Semaphore(max_workers)
-    async def process(story):
-        async with semaphore:
-            return await analyze_single_story(story)
-    return await asyncio.gather(*[process(s) for s in stories])
-```
+## Memory Management
 
-### 10.4 Memory Management
+- Python scripts process stories in chunks (configurable via `BATCH_SIZE`). Tune this value if you see memory pressure on low-RAM machines.
+- The renderer uses virtual scrolling for story lists and carts, so even thousands of entries remain responsive.
+- Set `MAX_STORIES_IN_MEMORY` to match available hardware; results beyond this value remain on disk but are streamed when required.
 
-**Memory Usage by Component:**
+## When to Choose Local Models
 
-| Component | Idle | Extraction | Analysis | Peak |
-|-----------|------|------------|----------|------|
-| Electron (UI) | 150 MB | 200 MB | 250 MB | 300 MB |
-| Node.js (Main) | 80 MB | 120 MB | 150 MB | 200 MB |
-| Python (Processing) | 200 MB | 500 MB | 1.5 GB | 2.5 GB |
-| ML Models (if loaded) | 0 MB | 0 MB | 0 MB | 1.2 GB |
-| **Total** | **430 MB** | **820 MB** | **1.9 GB** | **4.2 GB** |
+- Use Ollama when regulatory requirements forbid cloud inference or when running frequent internal analyses where cost savings outweigh latency.
+- Prefer GPT-5 when turnaround time and summarisation quality are critical.
+- Hybrid mode (default) automatically tries OpenAI first and falls back to Ollama; override with `FORCE_OFFLINE_MODE` or CLI flags for deterministic behaviour.
 
-**Memory Optimization Techniques:**
+## Diagnostics
 
-| Technique | Implementation | Benefit |
-|-----------|---------------|---------|
-| **Lazy Model Loading** | Load ML models on first use via property decorator<br>Unload with `del` + `gc.collect()` when done | Reduce startup memory<br>Free ~200MB when inactive |
-| **Streaming I/O** | Use Node.js streams for large file operations<br>`readStream.pipe(transform).pipe(writeStream)` | Constant memory for 50MB+ exports<br>No full-file buffering |
-| **GC Tuning** | V8 flag: `--max-old-space-size=4096`<br>Python: explicit `gc.collect()` after heavy ops | Handle large datasets<br>Prevent memory leaks |
-| **Data Chunking** | Process in 100-500 story batches<br>Clear intermediate results | Predictable memory profile<br>Scalable to 10K+ stories |
-
-### 10.5 Scalability Limits
-
-**Current Architecture Limits:**
-
-| Metric | Limit | Workaround |
-|
+- Enable verbose logging: `LOG_LEVEL=debug` for granular timings and provider responses.
+- Use `logs/performance-*.log` to identify slow stages.
+- The automation suite documented in `AUTOMATION_SUITE_OVERVIEW.md` provides a quick regression check after tuning settings.

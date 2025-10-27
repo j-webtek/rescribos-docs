@@ -1,53 +1,34 @@
 # System Architecture
 
-This section provides a comprehensive overview of the Rescribos platform architecture, including the multi-layer design, technology stack, and cross-platform support.
+The Rescribos platform follows a layered architecture that separates presentation, orchestration, and heavy processing concerns while keeping communication deterministic and auditable. This page mirrors the authoritative details in `docs/SYSTEM_ARCHITECTURE.md`.
 
-### 1.1 Multi-Layer Design
+## Layer Overview
 
-Rescribos employs a sophisticated multi-layer architecture that separates concerns while maintaining tight integration:
+1. **Electron renderer** – Provides the desktop UI, semantic search explorer, report viewer, and chat assistant. All communication with the backend goes through a secure preload bridge that exposes only vetted IPC channels.
+2. **Node.js main process** – Orchestrates background work, coordinates configuration, manages secure credential storage via Keytar, and spawns Python workers with sanitised environment variables.
+3. **Python workers** – Execute extraction, analysis, clustering, document processing, and export jobs. Workers emit structured JSON messages for progress, logging, and error reporting.
+4. **AI provider adapters** – Map the analysis pipeline to OpenAI, Ollama, or transformer-based fallbacks. Provider selection is dynamic and can change mid-run if a service is unavailable.
+5. **Persistence layer** – Reports, logs, embeddings, and configuration data are stored under the project’s `storage/`, `logs/`, and `config/` directories to ensure everything remains on-device.
 
 ```
-┌─────────────────────────────────────────────────────┐
-│           Electron Frontend Layer                   │
-│  • Rich interactive UI (HTML5/JavaScript)          │
-│  • Advanced virtual rendering for large datasets   │
-│  • Real-time progress tracking                     │
-│  • Multi-tab interface (reports, chat, search)     │
-└─────────────────────────────────────────────────────┘
-                        ↕ IPC
-┌─────────────────────────────────────────────────────┐
-│        Node.js Orchestration Layer                  │
-│  • Workflow coordination and state management      │
-│  • File system operations with atomic writes       │
-│  • License validation and activation tracking      │
-│  • Performance monitoring and metrics              │
-│  • Error recovery and retry mechanisms             │
-└─────────────────────────────────────────────────────┘
-                        ↕ Child Process
-┌─────────────────────────────────────────────────────┐
-│         Python Processing Pipeline                  │
-│  • Async data extraction (10+ sources)            │
-│  • AI-powered analysis and summarization           │
-│  • ML-based clustering and categorization          │
-│  • Embedding generation and similarity search      │
-│  • Natural language chat interface                 │
-└─────────────────────────────────────────────────────┘
-                        ↕ API/Local
-┌─────────────────────────────────────────────────────┐
-│              AI Provider Layer                      │
-│  • OpenAI (GPT-4o, text-embedding-3-large)        │
-│  • Ollama (Llama 3.1:8b, nomic-embed-text)        │
-│  • Local Models (SentenceTransformers)             │
-│  • Automatic fallback and provider selection       │
-└─────────────────────────────────────────────────────┘
-                        ↕
-┌─────────────────────────────────────────────────────┐
-│            Data Persistence Layer                   │
-│  • JSON reports (structured, versioned)            │
-│  • SQLite vector database (embeddings.db)          │
-│  • Markdown summaries (human-readable)             │
-│  • Local file system storage                       │
-└─────────────────────────────────────────────────────┘
+[Renderer UI] --IPC--> [Node.js main] --child process--> [Python pipeline]
+      │                       │                               │
+  report explorer       config + secrets                 extraction, analysis,
+  chat + search         job scheduling                   clustering, export
+      │                       │                               │
+  user actions     <---- JSON progress ---->      CLI, automation, scheduled jobs
 ```
 
-[Continue to Multi-Layer Design →](multi-layer-design.md)
+## Cross-Cutting Principles
+
+- **Local-first storage** – Reports, embeddings, and raw data remain on the user’s filesystem by default.
+- **Deterministic IPC** – Renderer-to-main and main-to-Python communications use well-defined schemas documented in `docs/DEVELOPER_GUIDE_IPC_EVENTS.md`.
+- **Security guardrails** – The preload script exposes whitelisted operations, command-line tools validate environment variables, and secrets never transit the renderer.
+- **Recovery friendly** – Long-running operations write checkpoints and use atomic file writes so restarts can pick up without data loss.
+
+## Related Documentation
+
+- [Multi-Layer Design](multi-layer-design.md)
+- [Technology Stack](technology-stack.md)
+- [Cross-Platform Support](cross-platform.md)
+- [AI Provider System](../ai-provider-system/README.md)

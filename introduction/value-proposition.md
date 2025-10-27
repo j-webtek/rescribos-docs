@@ -1,231 +1,48 @@
 # Value Proposition
 
-Rescribos Data Refinement delivers value across different user segments with tailored benefits for individuals, teams, enterprises, and regulated industries.
+Rescribos Data Refinement delivers measurable impact for each stakeholder group that participates in AI-focused research and monitoring.
 
-## For Individuals
+## Individual Researchers
 
-### Researchers & Analysts
+- **Automate discovery** – Schedule extractions from Hacker News, arXiv, and any additional connectors you generate with the data source template, then review a distilled digest instead of hundreds of raw posts.
+- **Accelerate analysis** – Summaries, impact scores, and follow-up prompts are generated in one run, cutting manual synthesis time from hours to minutes.
+- **Stay in control of spend** – Bring your own OpenAI key or run everything through local Ollama models when cost or privacy takes priority.
+- **Travel-ready workflows** – Offline mode keeps the full toolchain operational during travel or in low-connectivity regions.
 
-**Automate daily research workflows across multiple sources**
-- Save 10-15 hours per week on literature review and content curation
-- Never miss important papers or discussions in your field
-- Generate publication-ready reports in minutes instead of hours
+## Collaborative Teams
 
-**Control AI costs directly**
-- Pay OpenAI at cost (no markup, typically $0.50-$2.50 per run)
-- Or use free local models (Ollama with Llama 3.1)
-- Full transparency in your AI usage via OpenAI dashboard
+- **Shared context** – Reports, carts, and configuration profiles live in versionable JSON and Markdown, making it easy to hand off work or run follow-up analysis.
+- **Repeatable standards** – Prompt templates, environment profiles, and automation scripts enforce consistent outputs regardless of who executes the job.
+- **Flexible exports** – PDF for stakeholders, Markdown for knowledge bases, and JSON for analytics stacks ensure everyone receives the right format.
+- **CLI + scheduler integration** – Use `npm run cli -- <command>` within cron or CI to deliver daily reports without manual effort.
 
-**Work completely offline when needed**
-- Full functionality with local AI models
-- Perfect for travel, unstable connections, or air-gapped environments
-- No dependency on cloud services
+## Enterprises and Programs
 
-### Key Benefits
-- Time savings: 10-15 hours/week
-- Cost control: Direct API access, no middleman
-- Flexibility: Online or offline operation
-- Quality: PhD-level analysis depth
+- **On-premises deployment** – Deliver as a desktop app, Docker container, or scripted pipeline with no dependency on external services beyond chosen AI providers.
+- **Security posture** – Credentials are stored via Keytar, data lives under `storage/`, and no telemetry is emitted.
+- **Compliance assistance** – Documentation maps to GDPR, HIPAA-friendly processing, and NIST-style control checkpoints (see [Privacy & Security](../privacy-security/README.md)).
+- **Scalable support** – Integration guides cover CLI automation, IPC events, and document processing so internal teams can extend the solution.
 
----
+## Regulated and Air-Gapped Environments
 
-## For Teams
+- **Zero cloud dependency** – Run entirely on local models when required; license validation supports offline grace periods.
+- **Transparent pipeline** – Python workers are open for review and paired with verbose logging for audits.
+- **Deterministic configuration** – Profiles make it simple to recreate an analysis with the same parameters for legal or compliance review.
 
-### Collaborative Intelligence
+## Indicative ROI
 
-**Centralize knowledge discovery and synthesis**
-- Shared report library for team collaboration
-- Consistent analysis quality across all team members
-- Unified workflow from extraction to distribution
+| Activity | Manual effort | With Rescribos | Time saved |
+|----------|---------------|----------------|------------|
+| Daily content collection | ~2 hours | < 15 minutes | 1 h 45 m |
+| Manual summarisation | ~4 hours | ~30 minutes | 3 h 30 m |
+| Theme organisation | ~2 hours | < 20 minutes | 1 h 40 m |
+| Report packaging | ~1 hour | < 10 minutes | 50 minutes |
 
-**Maintain analysis standards**
-- Configurable AI prompts and thresholds
-- Template-based reporting
-- Quality metrics and tracking
+Even a single analyst working a five-day week can reclaim 35–40 hours, turning the annual licence and API costs into a fractional investment.
 
-**Share insights in standard formats**
-- PDF for stakeholder distribution
-- Markdown for wiki integration
-- JSON for programmatic access
-- Excel for data analysis
+## Choosing a Path
 
-**Collaborate via export/import**
-- Export research artifacts as JSON
-- Share carts between team members
-- Version control for reports
-
-### Key Benefits
-- Consistency: Standard analysis quality
-- Collaboration: Shared libraries and carts via export/import
-- Integration: Fits existing workflows
-- Scalability: Volume pricing for teams of 5+ users
-
----
-
-## For Enterprises
-
-### Enterprise-Grade Deployment
-
-**Deploy on-premises with air-gapped capability**
-- Full on-premises server deployment
-- Docker/Kubernetes orchestration
-- No internet dependency required
-- Hardware-based licensing
-
-**Meet compliance requirements**
-- GDPR compliance (data sovereignty)
-- HIPAA compatible (offline mode)
-- SOC 2 trust service criteria mapping
-- NIST 800-53 control alignment
-
-**Integrate into existing systems**
-- REST and GraphQL APIs
-- CLI automation tools
-- Webhook notifications
-- SIEM log integration
-
-**Scale from desktop to server**
-- Start with desktop deployment
-- Grow to containerized services
-- Multi-tenant architecture available
-- Unlimited users in Enterprise tier
-
-### Key Benefits
-- Compliance: GDPR, HIPAA, SOC 2, NIST
-- Control: On-premises or cloud deployment
-- Integration: APIs, CLI, webhooks
-- Support: Dedicated engineer, 1-hour SLA
-
----
-
-## For Federal/Regulated Industries
-
-### Maximum Security & Auditability
-
-**Zero cloud dependency**
-- 100% local processing with Ollama or local models
-- No data transmission to third-party APIs
-- Offline license validation (30-day grace period)
-- Manual license transfer for classified environments
-
-**Auditable processing pipeline**
-- Open-source Python scripts (fully reviewable)
-- Comprehensive audit logs
-- Deterministic processing (reproducible results)
-- Version-controlled configurations
-
-**Hardware-based licensing**
-- No phone-home requirement
-- Machine ID binding for security
-- Offline grace period
-- Air-gap compatible
-
-**NIST 800-53 control mapping**
-- AC-2: Account Management (hardware-based licensing)
-- AU-2: Audit Events (comprehensive logging)
-- IA-5: Authenticator Management (BYOK with OS keychain)
-- SC-8: Transmission Confidentiality (TLS 1.3)
-- SC-28: Protection at Rest (local encryption)
-
-### Key Benefits
-- Security: Zero-trust, air-gap capable
-- Auditability: Full logs and open code
-- Compliance: FedRAMP considerations
-- Flexibility: Offline operation
-
----
-
-## ROI Analysis
-
-### Time Savings
-
-| Task | Without Rescribos | With Rescribos | Time Saved |
-|------|-------------------|----------------|------------|
-| Daily content collection | 2 hours | 10 minutes | 1h 50m |
-| Reading & summarization | 4 hours | 30 minutes | 3h 30m |
-| Thematic organization | 2 hours | 15 minutes | 1h 45m |
-| Report generation | 1 hour | 5 minutes | 55m |
-| **Daily Total** | **9 hours** | **1 hour** | **8 hours** |
-| **Weekly Total** | **45 hours** | **5 hours** | **40 hours** |
-
-### Cost Efficiency
-
-**Individual Researcher:**
-- License cost: $150/year
-- OpenAI API: ~$10-$30/month (direct, no markup)
-- Total: ~$270-$510/year
-- Time saved: 40 hours/week × 48 weeks = 1,920 hours/year
-- ROI: Massive (pays for itself in less than 1 day of saved time)
-
-**Team of 5:**
-- Team licenses: 5 seats × $129/year = $645/year
-- OpenAI API: ~$50-$150/month across team
-- Total: ~$1,245-$2,445/year
-- Time saved: 200 hours/week × 48 weeks = 9,600 hours/year
-- ROI: 100x+ (assuming $50/hour analyst time)
-
-### Competitive Advantages
-
-**Early Trend Identification:**
-- Spot emerging technologies 3-6 months earlier
-- Identify competitive threats proactively
-- Make data-driven strategic decisions
-
-**Analysis Quality:**
-- PhD-level synthesis with citations
-- Multi-order implications analysis
-- Consistent quality across all reports
-
-**Data Sovereignty:**
-- No vendor lock-in
-- Complete control of intellectual property
-- Export data anytime in standard formats
-
----
-
-## Comparison with Alternatives
-
-### vs. Manual Research
-
-| Aspect | Manual | Rescribos |
-|--------|--------|-----------|
-| Time required | 9 hours/day | 1 hour/day |
-| Consistency | Varies by analyst | Consistent AI analysis |
-| Citations | Manual tracking | Automatic with links |
-| Export formats | Copy/paste | PDF, DOCX, MD, JSON, Excel |
-| Scalability | Limited by time | Process 1,000s of stories |
-
-### vs. SaaS Platforms
-
-| Aspect | Typical SaaS | Rescribos |
-|--------|-------------|-----------|
-| Data storage | Vendor cloud | Your local machine |
-| AI costs | Markup (3-5x) | Direct at cost (BYOK) |
-| Privacy | Vendor access | Complete privacy |
-| Offline capability | None | Full functionality |
-| Vendor lock-in | High | None (standard formats) |
-| Compliance | Vendor-dependent | You control everything |
-
-### vs. Custom Development
-
-| Aspect | Custom Build | Rescribos |
-|--------|--------------|-----------|
-| Development cost | $50K-$200K+ | $150/year |
-| Time to deploy | 6-12 months | Same day |
-| Maintenance | Ongoing dev cost | Included in license |
-| Updates | Manual | Automatic |
-| Support | Internal only | Professional support included |
-
----
-
-## Get Started
-
-Ready to experience the Rescribos value proposition?
-
-1. **Get licensed** - $150/year for complete access
-2. **Explore the docs** - Review [system architecture](../architecture/README.md)
-3. **See it in action** - Check [use cases](../use-cases/README.md)
-4. **Deploy** - Review [deployment options](../deployment/README.md)
-5. **Get support** - Professional support included with your license
-
-[Start with the System Architecture →](../architecture/README.md)
+1. Review the [system architecture](../architecture/README.md) to understand operational boundaries.
+2. Configure your environment using the [deployment and setup guides](../deployment/README.md).
+3. Explore advanced workflows in [core capabilities](../core-capabilities/README.md) and [automation](../advanced-features/report-management.md).
+4. Share results with stakeholders using the export tips in [report management](../advanced-features/report-management.md).

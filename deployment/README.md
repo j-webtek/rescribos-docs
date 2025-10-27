@@ -1,100 +1,33 @@
 # Deployment Options
 
-### 9.1 Desktop Installers
+Rescribos can be deployed as a desktop application, run headless through the CLI, or automated inside containers. This page summarises the processes described in `docs/DEVELOPMENT_SETUP.md` and `docs/DEPLOYMENT_GUIDE.md`.
 
-**Windows Installation:**
-```
-rescribos-setup-2.0.0.exe
-Size: 145 MB
-Installer: NSIS (Nullsoft Scriptable Install System)
-Features:
-  • Silent install: rescribos-setup.exe /S
-  • Custom install directory
-  • Start Menu shortcuts
-  • Desktop shortcut (optional)
-  • Auto-launch on startup (optional)
-  • Uninstaller included
+## Desktop Builds
 
-Install Location:
-  C:\Program Files\Rescribos\
+- Install dependencies: `npm install` followed by `npm run install-python`.
+- Launch in development: `npm start`.
+- Package installers: `npm run dist` (generates binaries under `dist-final/`).
+  - Windows: NSIS installer (`Rescribos Data Refinement-Setup-<version>.exe`).
+  - macOS: DMG with drag-and-drop install (`Rescribos Data Refinement-<version>.dmg`).
+  - Linux: AppImage and DEB packages.
+- User data paths follow the Electron defaults (`%APPDATA%` on Windows, `~/Library/Application Support` on macOS, `~/.config` on Linux).
 
-User Data:
-  C:\Users\[User]\AppData\Roaming\ai-news-extractor\
+## Headless / CLI
 
-Code Signing: DigiCert EV Certificate
-SmartScreen: Microsoft-approved
-```
+- `npm run cli --` exposes the full pipeline without launching the UI.
+- Run from scheduled tasks or CI to generate daily digests.
+- Profiles allow environment-specific overrides without editing `.env`.
 
-**macOS Installation:**
-```
-Rescribos-2.0.0.dmg
-Size: 152 MB
-Format: Apple Disk Image
-Features:
-  • Drag-and-drop installation
-  • Gatekeeper-approved
-  • Notarized by Apple
-  • Universal binary (Intel + Apple Silicon)
-  • Retina display optimized
+## Containers
 
-Install Location:
-  /Applications/Rescribos.app
+- Docker assets in `docker/` include compose files and helper scripts.
+- Mount `storage/`, `config/`, and `.env` for persistence when running in containers.
+- Optional Ollama container provides offline models for headless environments.
 
-User Data:
-  ~/Library/Application Support/ai-news-extractor/
+## Configuration Management
 
-Code Signing: Apple Developer Certificate
-Notarization: Apple-notarized
-```
+- `.env` contains defaults; additional profiles are stored in `.rescribosrc` and can be activated via CLI or UI.
+- `npm run cli -- config --set KEY=value` updates environment variables safely.
+- For multi-user deployments, store per-user `.env.local` files or rely on secure environment injection at launch time.
 
-**Linux Installation:**
-```
-AppImage (Recommended):
-  rescribos-2.0.0-x86_64.AppImage
-  Size: 148 MB
-  Usage: chmod +x rescribos*.AppImage && ./rescribos*.AppImage
-  No installation required, fully portable
-
-DEB Package (Debian/Ubuntu):
-  rescribos_2.0.0_amd64.deb
-  Install: sudo dpkg -i rescribos*.deb
-  Dependencies: Auto-resolved via apt
-
-RPM Package (Fedora/RHEL):
-  rescribos-2.0.0-1.x86_64.rpm
-  Install: sudo rpm -i rescribos*.rpm
-
-Install Location:
-  /opt/rescribos/
-
-User Data:
-  ~/.config/ai-news-extractor/
-```
-
-**Auto-Update System:**
-```javascript
-// Electron-updater configuration
-const { autoUpdater } = require('electron-updater');
-
-autoUpdater.setFeedURL({
-    provider: 'github',
-    owner: 'rescribos',
-    repo: 'rescribos-app'
-});
-
-autoUpdater.on('update-available', (info) => {
-    dialog.showMessageBox({
-        type: 'info',
-        title: 'Update Available',
-        message: `Version ${info.version} is available. Download now?`,
-        buttons: ['Download', 'Later']
-    });
-});
-
-autoUpdater.checkForUpdatesAndNotify();
-```
-
-## Sections
-
-- [Installation Guide](installation.md)
-- [Configuration](configuration.md)
+Continue with the detailed [installation steps](installation.md) and [configuration guidance](configuration.md).

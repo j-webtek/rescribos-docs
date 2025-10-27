@@ -1,41 +1,45 @@
 # Technology Stack
 
-### 1.2 Technology Stack
+The platform blends web, desktop, and data tooling to deliver a hybrid workflow. Versions listed here are aligned with `package.json` and `requirements.txt`.
 
-**Frontend Technologies:**
-- **Electron 38.0.0** - Cross-platform desktop framework
-- **Modern JavaScript/ES6+** - Async/await, modules, fetch API
-- **TypeScript 5.4.0** - Type-safe development (optional)
-- **HTML5 & CSS3** - Responsive, accessible interface
+## Frontend
 
-**Backend Coordination:**
-- **Node.js 18+** - Runtime with native fetch support
-- **IPC Protocol** - Bidirectional Electron communication
-- **Child Process Management** - Python script orchestration
-- **File System APIs** - Atomic writes, locking, streaming
+- **Electron 38** for cross-platform windows and menu integration.
+- **HTML/CSS/JavaScript** renderer code under `src/renderer/` and `src/results/`.
+- **TypeScript 5.x** for shared models and IPC type definitions compiled into `dist-ts/`.
+- **Font Awesome**, custom CSS modules, and Chart.js for visuals.
 
-**Python Processing:**
-- **Python 3.8+** - Core processing engine
-- **AsyncIO** - Concurrent request handling
-- **Type Hints** - Runtime validation with Pydantic/Zod
+## Main Process & Services
 
-**Key Dependencies:**
+- **Node.js 18** runtime with native `fetch` support.
+- **Keytar** for secure storage of OpenAI and Ollama credentials.
+- **dotenv** and custom loaders for environment profile management.
+- **electron-store** for persisted application preferences.
+- **pdfkit** and **docx** for export formatting.
+- **p-limit** and custom queues for throttling parallel tasks.
 
-*Python (25+ packages):*
-```
-AI/ML: openai>=1.0.0, sentence-transformers>=2.2.0, transformers>=4.21.0
-Deep Learning: torch>=2.0.0 (CPU), tensorflow-cpu>=2.13.0
-NLP: tiktoken, beautifulsoup4, playwright
-Clustering: hdbscan, scikit-learn, scipy
-Documents: python-docx, PyPDF2, PyMuPDF
-Async: aiohttp, asyncio
-```
+## Python Pipeline
 
-*Node.js (17 production):*
-```
-Core: electron, openai>=4.0.0, node-fetch
-Documents: docx, pdfkit
-Parsing: marked, dompurify
-Validation: zod
-Security: node-machine-id, keytar
-```
+- **Python 3.8+** running in virtual environment managed by `npm run install-python`.
+- **aiohttp** for asynchronous requests to Hacker News, arXiv, and other APIs.
+- **openai>=1.42** for GPT-5 integration.
+- **ollama-python** helpers in the AI manager for local inference.
+- **sentence-transformers**, **scikit-learn**, and **hdbscan** for embeddings and clustering.
+- **PyMuPDF (fitz)** and **python-docx** for document ingestion.
+- **playwright** optional dependency for scripted web extractions.
+
+## Data & Storage
+
+- **SQLite (with vector extensions)** for embedding search stored at `storage/embeddings/embeddings.db`.
+- **JSON** outputs under `storage/extracted/` and `storage/analyzed/` for raw and processed data.
+- **Markdown** reports in `storage/reports/` for human-readable summaries.
+- **Log files** under `logs/` with rotation handled by custom utilities.
+
+## Tooling & Quality
+
+- **Jest** and **Playwright** for JavaScript testing.
+- **Pytest** for Python unit and integration tests.
+- **ESLint**, **Prettier**, and **Flake8** for code consistency.
+- **Semantic Release** for automated changelog generation.
+
+For dependency installation steps and troubleshooting, refer to `docs/DEVELOPMENT_SETUP.md`.

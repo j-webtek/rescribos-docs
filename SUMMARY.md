@@ -45,6 +45,8 @@
   * [Performance Metrics](data-pipeline/performance-metrics.md)
 
 * [Advanced Features](advanced-features/README.md)
+  * [Document Library](advanced-features/document-library.md)
+  * [AI Preset Generator](advanced-features/ai-preset-generator.md)
   * [Document Processing](advanced-features/document-processing.md)
   * [Cart-Based Workflow](advanced-features/cart-workflow.md)
   * [Report Management](advanced-features/report-management.md)

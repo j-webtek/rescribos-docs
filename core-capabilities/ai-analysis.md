@@ -1,53 +1,47 @@
 # AI-Powered Analysis
 
-### 2.2 AI-Powered Analysis
+The analysis stack turns extracted stories into decision-ready insights. It mirrors the behaviour documented in `docs/AUTOMATION_SUITE_OVERVIEW.md` and `docs/AI_PROVIDER_SYSTEM_DOCUMENTATION.md`.
 
-Each collected item undergoes sophisticated AI analysis to extract insights and generate actionable intelligence:
+## Pipeline Components
 
-**Analysis Components:**
+1. **Summarisation**
+   - Models: OpenAI GPT-5 by default, Ollama Llama 3.1 when offline, or transformer fallbacks.
+   - Length: Controlled via `SUMMARY_LENGTH` (defaults to approximately 1,000 characters).
+   - Prompts: Context-aware templates defined in `config/prompts/`.
 
-**1. Summarization**
-- **Models:** GPT-4o (cloud) or Llama 3.1:8b (local)
-- **Length:** Configurable (default: 1000 characters)
-- **Quality:** Context-aware with citation preservation
-- **Temperature:** 0.7 for creative-yet-factual balance
+2. **Relevance Scoring**
+   - Multi-factor evaluation that combines keyword hit rate, novelty, and model-generated impact scoring.
+   - Threshold controlled by `MIN_RELEVANCE_SCORE` (see `docs/DEVELOPER_GUIDE_TESTING.md` for calibration guidance).
 
-**2. Relevance Scoring**
-- AI-driven content evaluation (0.0-1.0 scale)
-- Multi-criteria assessment (novelty, impact, accuracy)
-- Threshold-based filtering (default: 0.6)
+3. **Embedding Generation**
+   - Uses OpenAI `text-embedding-3-small` or `nomic-embed-text` via Ollama.
+   - Batch size tuned with `EMBEDDING_BATCH_SIZE` (default 100 per batch).
+   - Stored in `storage/embeddings/embeddings.db` with vector search backed by SQLite.
 
-**3. Embedding Generation**
-- **Vector Dimensions:** 1536 (OpenAI), 768 (local), 256 (hash fallback)
-- **Providers:** OpenAI, Ollama, SentenceTransformers
-- **Batch Processing:** 100 stories per batch for efficiency
-- **Storage:** SQLite database with indexed queries
+4. **Automated Tagging**
+   - Combines TF-IDF analysis with keyword heuristics to assign up to five tags per story.
+   - Normalises tags across the dataset to support grouping and filtering in the UI.
 
-**4. Automated Tagging**
-- TF-IDF n-gram extraction (1-2 grams)
-- Top-5 tags per story
-- Stop word filtering
-- Cross-story tag normalization
+5. **Clustering and Theme Detection**
+   - Clustering algorithms include `hdbscan` and agglomerative clustering depending on the dataset size.
+   - Themes feed both the report structure and the cart-based workflow for follow-up analysis.
 
-**5. Clustering**
-- **Algorithms:** AgglomerativeClustering, TF-IDF, embedding-based
-- **Similarity Metric:** Cosine similarity on vectors
-- **Cluster Size:** Dynamic (max 8 stories per cluster)
-- **Hierarchy:** Multi-level grouping for complex datasets
+## Configuration Highlights
 
-**Configuration:**
-```env
-OPENAI_MODEL=gpt-4o
-OPENAI_TEMPERATURE=0.7
+```dotenv
+OPENAI_MODEL=gpt-5
+OPENAI_TEMPERATURE=0.6
 SUMMARY_LENGTH=1000
-EMBEDDING_MODEL=text-embedding-3-large
+EMBEDDING_MODEL=text-embedding-3-small
 EMBEDDING_BATCH_SIZE=100
 DEDUP_THRESHOLD=0.85
 ```
 
-**Analysis Pipeline:**
-```
-Raw Story → Summarization → Relevance Scoring → Embedding Generation → Tagging → Clustering → Output
-    ↓           ↓                ↓                     ↓                ↓          ↓           ↓
-  5-10s      2-3s/story      0.5s/story           1s/batch         0.1s      0.5s      JSON/Markdown
-```
+- Set `FORCE_OFFLINE_MODE=true` to enforce use of local summarisation and embedding models.
+- Use `PROMPT_PROFILE=<name>` to switch between preset prompt templates stored under `config/prompt-profiles/`.
+
+## Outputs
+
+- Summaries, relevance scores, tags, and embeddings are stored in the analysed JSON files under `storage/analyzed/`.
+- Distilled Markdown reports in `storage/reports/` contain executive summaries, key takeaways, and citation references for each theme.
+- The chat assistant and semantic search consume the same analysed dataset, guaranteeing consistent answers across interfaces.

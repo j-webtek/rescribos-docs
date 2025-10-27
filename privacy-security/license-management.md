@@ -1,47 +1,30 @@
-# License Management System
+# License Management
 
-### 4.3 License Management System
+Rescribos includes optional license enforcement logic suited for commercial deployments. The implementation resides in `lib/license-manager.js` and can be disabled for internal builds.
 
-Rescribos uses a **hardware-based licensing system** that protects user privacy while preventing piracy:
+## How It Works
 
-**License Architecture:**
+- **Machine binding** – Uses `node-machine-id` to derive a stable hardware identifier. Identifiers are hashed before leaving the device.
+- **Activation flow** – Validates licences by calling the configured licensing endpoint (see `.env.example`). Responses contain signed tokens that are cached locally.
+- **Offline grace** – Licences remain valid for a configurable period (default 30 days) without contacting the server, enabling air-gapped environments.
+- **Audit trail** – Activation attempts, successes, and failures are logged under `logs/license*.log`.
+
+## Privacy Posture
+
+- Only the hashed machine identifier, licence key, and application version are transmitted.
+- No usage metrics or telemetry are collected during activation checks.
+- The validator code is open and can be inspected or replaced if organisations need bespoke controls.
+
+## Configuration
+
+Relevant environment variables (see `.env.example`):
+
 ```
-┌─────────────────────────────────────────────────────┐
-│              License Server (Cloud)                 │
-│  • License generation and activation                │
-│  • Machine ID validation                            │
-│  • No user data collection                          │
-│  • Minimal metadata (activation count only)         │
-└─────────────────────────────────────────────────────┘
-                        ↕ HTTPS
-┌─────────────────────────────────────────────────────┐
-│         Client License Validator (Local)            │
-│  • Hardware ID generation (machine-id library)      │
-│  • License signature verification                   │
-│  • Offline grace period (30 days)                   │
-│  • No telemetry or tracking                         │
-└─────────────────────────────────────────────────────┘
-```
-
-**Implementation (`src/electron/licenseManager.js`):**
-
-Core license validation logic:
-```javascript
-class LicenseManager {
-    // getMachineId() -> SHA-256 hash of hardware ID (stable, unique)
-    // activateLicense(key) -> POST to server, verify signature, save locally
-    // isLicenseValid() -> check: signature, expiration, machine binding
-    // Offline grace: 30-day cached validation period
-}
+LICENSE_SERVER_URL=https://license.rescribos.com
+LICENSE_VALIDATION_INTERVAL_HOURS=24
+OFFLINE_GRACE_PERIOD_DAYS=30
 ```
 
-**Privacy Guarantees:**
-- **No User Identification:** Only hardware ID sent (hashed)
-- **No Usage Tracking:** License server doesn't log activity
-- **Offline Grace Period:** 30-day validation cache
-- **Transparent:** Open-source license validator code
-- **Minimal Data:** Only license key, machine ID, app version
+Set `LICENSE_ENFORCEMENT=false` during development or internal evaluation if licence checks are not required.
 
-**License Types:**
-- **Rescribos Complete:** Single-user, 1 device per seat ($150/year, or $129/year for 5+ seats)
-- **Enterprise:** Unlimited users, custom deployment
+For operational guidelines and compliance mapping, refer to `docs/CODE_PROTECTION_GUIDE.md`.

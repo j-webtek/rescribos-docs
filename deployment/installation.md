@@ -1,199 +1,77 @@
 # Installation Guide
 
-### 9.1 Desktop Installers
+This guide mirrors the steps in `docs/DEVELOPMENT_SETUP.md` and highlights platform nuances.
 
-**Windows Installation:**
-```
-rescribos-setup-2.0.0.exe
-Size: 145 MB
-Installer: NSIS (Nullsoft Scriptable Install System)
-Features:
-  • Silent install: rescribos-setup.exe /S
-  • Custom install directory
-  • Start Menu shortcuts
-  • Desktop shortcut (optional)
-  • Auto-launch on startup (optional)
-  • Uninstaller included
+## Prerequisites
 
-Install Location:
-  C:\Program Files\Rescribos\
+- Node.js 18 or newer.
+- Python 3.8 or newer (ensure it is available on your PATH).
+- Git, make, and a C++ build toolchain for native modules (Windows users can install Microsoft Build Tools).
+- Optional: Ollama for offline AI models.
 
-User Data:
-  C:\Users\[User]\AppData\Roaming\ai-news-extractor\
+## First-Time Setup
 
-Code Signing: DigiCert EV Certificate
-SmartScreen: Microsoft-approved
-```
-
-**macOS Installation:**
-```
-Rescribos-2.0.0.dmg
-Size: 152 MB
-Format: Apple Disk Image
-Features:
-  • Drag-and-drop installation
-  • Gatekeeper-approved
-  • Notarized by Apple
-  • Universal binary (Intel + Apple Silicon)
-  • Retina display optimized
-
-Install Location:
-  /Applications/Rescribos.app
-
-User Data:
-  ~/Library/Application Support/ai-news-extractor/
-
-Code Signing: Apple Developer Certificate
-Notarization: Apple-notarized
-```
-
-**Linux Installation:**
-```
-AppImage (Recommended):
-  rescribos-2.0.0-x86_64.AppImage
-  Size: 148 MB
-  Usage: chmod +x rescribos*.AppImage && ./rescribos*.AppImage
-  No installation required, fully portable
-
-DEB Package (Debian/Ubuntu):
-  rescribos_2.0.0_amd64.deb
-  Install: sudo dpkg -i rescribos*.deb
-  Dependencies: Auto-resolved via apt
-
-RPM Package (Fedora/RHEL):
-  rescribos-2.0.0-1.x86_64.rpm
-  Install: sudo rpm -i rescribos*.rpm
-
-Install Location:
-  /opt/rescribos/
-
-User Data:
-  ~/.config/ai-news-extractor/
-```
-
-**Auto-Update System:**
-```javascript
-// Electron-updater configuration
-const { autoUpdater } = require('electron-updater');
-
-autoUpdater.setFeedURL({
-    provider: 'github',
-    owner: 'rescribos',
-    repo: 'rescribos-app'
-});
-
-autoUpdater.on('update-available', (info) => {
-    dialog.showMessageBox({
-        type: 'info',
-        title: 'Update Available',
-        message: `Version ${info.version} is available. Download now?`,
-        buttons: ['Download', 'Later']
-    });
-});
-
-autoUpdater.checkForUpdatesAndNotify();
-```
-
-### 9.2 Docker Deployment
-
-**Docker Hub:**
 ```bash
-# Pull pre-built image
-docker pull rescribos/rescribos:latest
-
-# Run with volume mounting
-docker run -d \
-  --name rescribos \
-  -v $(pwd)/data:/data/storage \
-  -v $(pwd)/config:/app/config \
-  -e OPENAI_API_KEY=sk-... \
-  rescribos/rescribos:latest
+git clone https://github.com/rescribos/data-refinement.git ai-news-extractor
+cd ai-news-extractor
+npm install
+npm run install-python
 ```
 
-**Docker Compose (Full Stack):**
-```yaml
-version: '3.8'
+`npm run install-python` upgrades `pip`, removes conflicting TensorFlow versions, installs PyTorch CPU wheels, installs project requirements, and registers Playwright (for automated browser tasks).
 
-services:
-  rescribos:
-    image: rescribos/rescribos:latest
-    container_name: rescribos
-    restart: unless-stopped
-    volumes:
-      - ./data:/data/storage
-      - ./config:/app/config
-      - ./logs:/app/logs
-    environment:
-      - NODE_ENV=production
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - OLLAMA_BASE_URL=http://ollama:11434
-      - DATA_DIR=/data/storage
-      - LOG_LEVEL=info
-    ports:
-      - "3000:3000"  # Web UI (if enabled)
-    depends_on:
-      - ollama
-    networks:
-      - rescribos-net
+## Running the Desktop App
 
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ollama
-    restart: unless-stopped
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama-models:/root/.ollama
-    environment:
-      - OLLAMA_HOST=0.0.0.0
-    networks:
-      - rescribos-net
-
-volumes:
-  ollama-models:
-
-networks:
-  rescribos-net:
-    driver: bridge
+```bash
+npm start
 ```
 
-**Kubernetes Deployment:**
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: rescribos
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: rescribos
-  template:
-    metadata:
-      labels:
-        app: rescribos
-    spec:
-      containers:
-      - name: rescribos
-        image: rescribos/rescribos:latest
-        env:
-        - name: OPENAI_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: rescribos-secrets
-              key: openai-api-key
-        - name: DATA_DIR
-          value: /data/storage
-        volumeMounts:
-        - name: data
-          mountPath: /data/storage
-        - name: config
-          mountPath: /app/config
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: rescribos-data
-      - name: config
-        configMap:
-          name: rescribos-config
+- The first launch prompts for configuration paths and API keys.
+- Data is stored under the Electron user data directory (`%APPDATA%` on Windows, `~/Library/Application Support` on macOS, `~/.config` on Linux).
+
+## Packaging Installers
+
+```bash
+npm run dist           # Build platform-specific artefacts
+npm run dist:win       # Windows NSIS installer
+npm run dist:mac       # macOS DMG
+npm run dist:linux     # Linux AppImage + DEB
 ```
+
+Outputs are written to `dist-final/`. Configure signing certificates via `scripts/build/setup-signing.js` if required.
+
+## CLI-Only Environments
+
+```bash
+npm run cli -- extract --max-stories 200
+npm run cli -- analyze --date 2025-10-10
+npm run cli -- thematic
+npm run cli -- export-pdf storage/reports/ai_report_2025-10-10.json --output ./exports/latest.pdf
+```
+
+- Profiles managed via `.rescribosrc` can be activated with `npm run cli -- profile default <name>`.
+- Use cron, Task Scheduler, or CI pipelines to schedule repeated runs.
+
+## Containerised Deployment
+
+- Dockerfiles and compose samples are located in `docker/`.
+- Mount `storage/`, `config/`, and `.env` to keep outputs persistent:
+
+```bash
+docker compose up -d rescribos
+docker compose exec rescribos npm run cli -- extract --sources hackernews
+docker compose exec rescribos npm run cli -- analyze --date $(date +%Y-%m-%d)
+```
+
+- Run Ollama in a sidecar container if offline summarisation is required.
+
+## Updating
+
+```bash
+git pull
+npm install
+npm run install-python
+```
+
+- Re-run packaging commands if you distribute installers.
+- Review `CHANGELOG.md` for migration notes between releases.

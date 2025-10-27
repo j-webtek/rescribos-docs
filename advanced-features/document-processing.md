@@ -1,87 +1,60 @@
-# Document Processing
+﻿# Document Processing
 
 ### 6.1 Document Processing
 
 Rescribos extends beyond web content to process **local documents** (PDF, DOCX, TXT), integrating them seamlessly into the analysis pipeline.
 
-**Supported Formats:**
-- **PDF** - Research papers, reports, books
+**Supported Formats (default):**
+- **PDF** - Research papers, reports, books (via PyMuPDF with PyPDF2 fallback)
 - **DOCX** - Word documents, proposals
-- **TXT** - Plain text files, notes
-- **Markdown** - Documentation, blog posts
+- **TXT** - Plain text files and notes
 
-**Implementation (`src/python/document_processor.py`):**
+Additional extensions can be added through configuration when creating custom workflows.
+
+**Implementation (`scripts/document_processor.py`):**
 ```python
+@dataclass
+class DocumentProcessorConfig:
+    supported_extensions: List[str] = None
+    max_file_size_mb: int = 50
+    max_files_per_batch: int = 100
+    min_text_length: int = 10
+    max_text_length: int = 50000
+    chunk_size: int = 5000
+    chunk_overlap: int = 200
+
 class DocumentProcessor:
-    """Extract and process local documents"""
+    def extract_text_from_docx(self, file_path: str) -> Tuple[str, Dict]:
+        # Multiple extraction strategies (paragraphs, tables, XML fallback)
+        ...
 
-    def process_pdf(self, file_path: str) -> dict:
-        """Extract text and metadata from PDF"""
-        import PyPDF2
-        import fitz  # PyMuPDF for better extraction
+    def extract_text_from_pdf(self, file_path: str) -> Tuple[str, Dict]:
+        # Uses PyMuPDF when available and falls back to PyPDF2
+        ...
 
-        doc = fitz.open(file_path)
-        text = ""
-        metadata = doc.metadata
-
-        for page in doc:
-            text += page.get_text()
-
-        return {
-            'title': metadata.get('title', os.path.basename(file_path)),
-            'author': metadata.get('author', 'Unknown'),
-            'content': text,
-            'page_count': len(doc),
-            'source': 'local_pdf',
-            'file_path': file_path
-        }
-
-    def process_docx(self, file_path: str) -> dict:
-        """Extract text from Word document"""
-        from docx import Document
-
-        doc = Document(file_path)
-        text = '\n'.join([para.text for para in doc.paragraphs])
-
-        # Extract metadata
-        core_props = doc.core_properties
-
-        return {
-            'title': core_props.title or os.path.basename(file_path),
-            'author': core_props.author or 'Unknown',
-            'content': text,
-            'created': core_props.created,
-            'source': 'local_docx',
-            'file_path': file_path
-        }
-
-    async def analyze_document(self, document: dict):
-        """Apply full analysis pipeline to document"""
-        # Same pipeline as web content
-        summary = await self.ai_manager.summarize(document['content'])
-        embedding = await self.ai_manager.generate_embedding(summary)
-        tags = self.extract_tags(document['content'])
-
-        return {
-            **document,
-            'summary': summary,
-            'embedding': embedding,
-            'tags': tags
-        }
+    def process_documents(self, paths: List[str]) -> Dict[str, List[Dict]]:
+        # Deduplicates via MD5 hashes, chunks large files, and emits progress events
+        ...
 ```
 
 **Features:**
-- **Automatic Format Detection:** Based on file extension
-- **Metadata Extraction:** Title, author, date, page count
-- **Full-Text Search:** Document content indexed
-- **Same Analysis Pipeline:** Summarization, tagging, clustering
-- **Citation Preservation:** Original file paths maintained
+- **Automatic Format Detection:** Based on file extension with a configurable allowlist.
+- **Metadata Extraction:** Captures author/title when available and stores file hashes for deduplication.
+- **Chunking & Filtering:** Splits long documents and discards files below the relevance threshold.
+- **Shared Analysis Pipeline:** Outputs feed directly into `analyzer.py` so summaries, tags, and embeddings are generated alongside web stories.
+- **Citation Preservation:** Original file paths and hashes are stored for traceability.
 
 **Usage Flow:**
 ```
-1. User uploads document(s) via UI
-2. Document processor extracts text and metadata
-3. Content enters standard analysis pipeline
-4. Results integrated with web-sourced stories
-5. Documents appear in search and chat
+1. Use the UI or `npm run cli -- extract-docs <paths...>` to collect documents.
+2. Document processor extracts text, metadata, and hashes while emitting progress updates.
+3. The resulting dataset flows into the standard analysis pipeline.
+4. Results integrate with web-sourced stories for search, chat, and reporting.
 ```
+
+**Key CLI flags (see `docs/cli.md` for details):**
+- `--output FILE` - Custom destination for the extracted dataset.
+- `--max-size MB` / `--max-files N` - Control batch size for large folders.
+- `--recursive` - Walk directories to discover nested documents.
+- `--include-metadata` - Preserve document metadata in the output payload.
+- `--chunk-size N` and `--extensions LIST` - Tune chunking and supported file types.

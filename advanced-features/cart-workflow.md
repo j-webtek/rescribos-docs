@@ -1,78 +1,37 @@
-# Cart-Based Workflow
+﻿# Cart Workflow
 
-### 6.2 Cart-Based Workflow
+The cart system lets analysts curate subsets of stories for focused analysis or reusable briefs.
 
-The **Cart System** allows users to curate collections of stories for custom reports:
+## Where It Lives
 
-**Implementation (`src/electron/cartManager.js`):**
-```javascript
-class CartManager {
-    constructor() {
-        this.cartPath = path.join(app.getPath('userData'),
-                                   'storage', 'cart');
-        this.carts = new Map();
-    }
+- UI logic: `src/results/cart.js`, `src/results-manager.js`, and supporting markup in `src/index.html`.
+- Persistence: selections are stored in `localStorage` and mirrored to JSON files under `storage/cart/` when processed.
+- Backend: `scripts/cart_manager.py` and `scripts/cart_processor.py` handle saving carts and generating dedicated reports.
 
-    createCart(name = 'default') {
-        const cart = {
-            id: this.generateCartId(),
-            name: name,
-            created_at: new Date().toISOString(),
-            stories: [],
-            tags: [],
-            notes: ''
-        };
+## Workflow
 
-        this.carts.set(cart.id, cart);
-        this.saveCart(cart);
-        return cart;
-    }
+1. **Collect stories** – Add items from the report explorer, search results, or automation outputs.
+2. **Review & annotate** – Use the cart modal to reorder stories, add notes, and preview the resulting brief.
+3. **Generate report** – Trigger the cart analysis, which reuses the Python pipeline to create Markdown/JSON outputs scoped to the selected stories.
+4. **Export** – Download PDF, DOCX, Markdown, or JSON versions, or feed the cart into scheduled CLI runs.
 
-    addStoryToCart(cartId, story) {
-        const cart = this.carts.get(cartId);
+## CLI Integration
 
-        // Prevent duplicates
-        if (cart.stories.find(s => s.id === story.id)) {
-            return { success: false, reason: 'Already in cart' };
-        }
+```bash
+# Process a saved cart into a bespoke brief
+npm run cli -- cart-process ./storage/cart/ai-weekly.json --instructions "Highlight funding signals" --tone technical --audience "AI researchers"
 
-        cart.stories.push(story);
-        cart.updated_at = new Date().toISOString();
-        this.saveCart(cart);
-
-        return { success: true, cart: cart };
-    }
-
-    removeStoryFromCart(cartId, storyId) {
-        const cart = this.carts.get(cartId);
-        cart.stories = cart.stories.filter(s => s.id !== storyId);
-        this.saveCart(cart);
-    }
-
-    generateReportFromCart(cartId) {
-        const cart = this.carts.get(cartId);
-
-        // Send cart stories to Python for full analysis
-        return this.pythonBridge.call('generate_cart_report', {
-            stories: cart.stories,
-            cart_name: cart.name,
-            user_notes: cart.notes
-        });
-    }
-}
+# Re-analyse an exported cart file directly
+npm run cli -- analyze --file ./storage/cart/ai-weekly.json
 ```
 
-**Cart Features:**
-- **Multiple Carts:** Organize by project, topic, client
-- **Drag-and-Drop:** Add stories from search results
-- **Manual Notes:** Annotate cart with context
-- **Custom Reports:** Generate thematic analysis from cart
-- **Export Options:** PDF, DOCX, Markdown
-- **Sharing:** Export cart as JSON for collaboration
+Key options for `cart-process`:
+- `--instructions` – Additional guidance for the summariser.
+- `--important` – Must-cover talking points emphasised in the brief.
+- `--tone` and `--audience` – Tailor the narrative for stakeholders.
 
-**Use Cases:**
-- Competitive intelligence tracking
-- Research paper collection
-- Due diligence materials
-- Content curation for newsletters
-- Client-specific reports
+## Tips
+
+- Maintain multiple carts for recurring deliverables (e.g., weekly digest, competitor watch).
+- Version-control exported cart JSON to track how coverage evolves over time.
+- Pair carts with prompt profiles to tailor tone and depth for different audiences.

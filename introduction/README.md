@@ -1,58 +1,44 @@
 # Executive Summary
 
-**Rescribos Data Refinement** is an enterprise-grade, privacy-first desktop application that transforms how organizations collect, analyze, and synthesize information from multiple sources. Built on a sophisticated hybrid AI architecture, Rescribos combines the power of cloud-based language models with complete offline capability, giving users unprecedented control over their data while maintaining cutting-edge analytical capabilities.
+Rescribos Data Refinement streamlines the end-to-end process of monitoring AI-related news. The application captures data from public sources such as Hacker News and arXiv, augments it with locally supplied documents, and runs an AI-assisted analysis pipeline that produces actionable briefings, thematic groupings, and semantic search.
 
-## Critical Challenges Addressed
+## Challenges Addressed
 
-The platform addresses critical challenges in modern knowledge work:
+- **Signal extraction** – Reduce noise from fast-moving feeds through keyword filters, relevance scoring, and duplicate suppression.
+- **Analysis turnaround** – Generate executive summaries, impact scores, and theme groupings within minutes, even for large story sets.
+- **Research continuity** – Keep the entire workflow local so regulated teams can operate in offline or air-gapped environments.
+- **Operational consistency** – Reuse saved configurations, automation scripts, and CLI commands across teams and environments.
 
-- **Information Overload** - Automated collection and filtering from 10+ sources
-- **Analysis Bottlenecks** - AI-powered summarization and thematic analysis
-- **Privacy Concerns** - Complete local processing with bring-your-own-keys (BYOK)
-- **Workflow Fragmentation** - Unified pipeline from extraction to actionable insights
+## Differentiators
 
-## Key Differentiators
-
-- **Privacy-First Architecture** - Local-first design with optional cloud processing
-- **Bring Your Own Keys** - User-controlled API credentials (OpenAI)
-- **Hybrid AI Processing** - Seamless cloud/local model switching
-- **Multi-Format Export** - PDF, DOCX, Markdown, JSON, Excel
-- **Interactive AI Chat** - Natural language Q&A over collected content
-- **Semantic Search** - Vector-based content discovery across reports
-- **Document Processing** - PDF, DOCX analysis and integration
-
-## What Makes Rescribos Different?
-
-Unlike traditional SaaS knowledge management platforms, Rescribos puts you in complete control:
-
-1. **Your Data Stays Local** - No cloud uploads, no vendor servers, no data mining
-2. **You Control AI Costs** - Pay OpenAI directly or use free local models
-3. **Work Anywhere** - Online, offline, or air-gapped environments
-4. **Enterprise-Ready** - GDPR, HIPAA, SOC 2, FedRAMP considerations
+- **Local-first architecture** – All content, embeddings, and reports are written to the operator’s filesystem under `storage/` and `reports/`.
+- **Provider flexibility** – Switch between OpenAI GPT-5, Ollama Llama 3.1, and transformer fallbacks without changing workflows.
+- **Verified pipeline** – Python scripts share one logging convention and emit structured progress events that the UI and CLI consume.
+- **Deep configurability** – Fine-grained environment variables, profiles, and cart presets allow tailored extractions and analyses.
+- **Full traceability** – Every report contains provenance metadata, raw story references, and citations for generated statements.
 
 ## Quick Facts
 
 | Aspect | Details |
 |--------|---------|
-| **Architecture** | Electron + Node.js + Python hybrid |
-| **AI Providers** | OpenAI (cloud), Ollama (local), SentenceTransformers (fallback) |
-| **Data Sources** | Hacker News, arXiv, PDF, DOCX, Web scraping |
-| **Export Formats** | PDF, DOCX, Markdown, JSON, Excel |
-| **Deployment** | Desktop app, Docker, CLI, on-premises server |
-| **Pricing** | $150/year per seat ($129/year for 5+ seats), Enterprise custom |
+| Core stack | Electron 38 (UI), Node.js 18 orchestrator, Python 3.8+ processing |
+| Sources | Hacker News, arXiv, local PDF/DOCX/TXT documents, extensible connectors built with the data source template |
+| Outputs | Markdown, JSON, PDF (via PDFKit), optional DOCX via `docx` |
+| Key features | Automated extraction, AI summarisation, cart batching, semantic search, interactive chat |
+| Deployment | Desktop app (`npm start`), packaged installers, Docker workflow, CLI |
+| Compliance support | BYOK credential storage (Keytar), no telemetry, offline-capable analysis |
 
-## Who is Rescribos For?
+## Who Benefits
 
-- **Research Analysts** - Track trends and generate intelligence reports
-- **Academic Researchers** - Literature review automation and paper tracking
-- **Competitive Intelligence Teams** - Monitor competitors and market developments
-- **Technology Strategists** - Stay ahead of emerging technologies
-- **Enterprise Knowledge Workers** - Centralized information synthesis
-- **Federal/Regulated Industries** - Air-gapped, compliant deployments
+- **Research analysts and strategists** who need daily intelligence briefings.
+- **Competitive intelligence teams** that monitor emerging products and patents.
+- **Academic and policy researchers** building literature reviews or tracking long-running topics.
+- **Innovation leads** looking to align internal planning with external developments.
+- **Security-sensitive organisations** that cannot rely on SaaS tooling or third-party storage.
 
-## Next Steps
+## Where to Go Next
 
-- Learn more about the [platform at a glance](at-a-glance.md)
-- Explore the [value proposition](value-proposition.md) for your use case
-- Dive into the [system architecture](../architecture/README.md)
-- Review [deployment options](../deployment/README.md)
+- Review the [at-a-glance snapshot](at-a-glance.md) for metrics and workflow highlights.
+- Understand the [full value proposition](value-proposition.md) by persona and deployment model.
+- Dig into the [system architecture](../architecture/README.md) to see how the tiers interact.
+- Jump to [deployment options](../deployment/README.md) for installation guidance.

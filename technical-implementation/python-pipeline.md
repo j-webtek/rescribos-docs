@@ -1,84 +1,43 @@
 # Python Pipeline
 
-### 7.2 Dependencies
+The Python scripts under `scripts/` power extraction, document processing, analysis, and automation. They are designed to run both from the Electron application and the CLI.
 
-**Python Dependencies (`requirements.txt`):**
-```
-# AI/ML Core
-openai>=1.0.0              # OpenAI API client
-sentence-transformers>=2.2.0  # Local embeddings
-transformers>=4.21.0       # Hugging Face transformers
-torch>=2.0.0               # PyTorch (CPU version)
-tensorflow-cpu>=2.13.0     # TensorFlow (CPU only)
+## Core Modules
 
-# NLP & Text Processing
-tiktoken>=0.5.0            # OpenAI tokenization
-beautifulsoup4>=4.11.0     # HTML parsing
-lxml>=4.9.0                # XML/HTML parser
-playwright>=1.40.0         # Browser automation
-nltk>=3.8.0                # Natural language toolkit
+| Module | Responsibility |
+|--------|----------------|
+| `extractor.py` | Fetches stories from Hacker News, arXiv, and configured sources; applies filtering, deduplication, and progress reporting. |
+| `analyzer.py` | Runs summarisation, relevance scoring, clustering, and report synthesis; delegates provider calls to the network-aware manager. |
+| `ai_providers/network_aware_manager.py` | Orchestrates OpenAI, Ollama, and local fallbacks; exposes unified interfaces for summaries and embeddings. |
+| `ai_compatibility.py` | Helper utilities that normalise provider behaviour and manage feature fallbacks. |
+| `document_processor.py` | Processes local PDF, DOCX, and TXT files and feeds them into the same analysis workflow. |
+| `cart_processor.py` | Turns saved cart selections into full thematic reports. |
+| `full_context_chat.py` | Supports the chat assistant by answering questions grounded in analysed reports. |
 
-# Clustering & Analysis
-hdbscan>=0.8.29            # Hierarchical clustering
-scikit-learn>=1.3.0        # ML algorithms
-scipy>=1.11.0              # Scientific computing
-numpy>=1.24.0              # Numerical operations
-pandas>=2.0.0              # Data manipulation
+## Execution Model
 
-# Document Processing
-python-docx>=0.8.11        # Word document handling
-PyPDF2>=3.0.0              # PDF text extraction
-PyMuPDF>=1.23.0            # Advanced PDF processing
-python-pptx>=0.6.21        # PowerPoint support
+- Scripts are invoked by Node.js using `child_process.spawn` with JSON-based stdout messages (progress, warnings, errors).
+- `asyncio` enables concurrent network calls during extraction.
+- Errors are propagated with structured payloads so the UI and CLI can present meaningful diagnostics.
+- Configuration is injected via environment variables prepared by `lib/env-loader.js`.
 
-# Async & HTTP
-aiohttp>=3.9.0             # Async HTTP client
-httpx>=0.25.0              # HTTP client with HTTP/2
-requests>=2.31.0           # Synchronous HTTP
+## Dependencies
 
-# Data Storage
-sqlite3                    # Built-in SQLite (vector DB)
-pydantic>=2.0.0            # Data validation
+Key packages declared in `requirements.txt` include:
 
-# Utilities
-python-dotenv>=1.0.0       # Environment management
-tqdm>=4.66.0               # Progress bars
-loguru>=0.7.0              # Advanced logging
-```
+- **Networking**: `aiohttp`, `requests`, `beautifulsoup4`, `tqdm`
+- **AI providers**: `openai`, `sentence-transformers`, `transformers`, `hf_xet`
+- **Local inference**: `torch`, `torchvision`, `tensorflow-cpu`
+- **ML & clustering**: `scikit-learn`, `hdbscan`, `numpy`, `scipy`
+- **Document handling**: `python-docx`, `PyPDF2`, `PyMuPDF`
+- **Utilities**: `python-dotenv`, `portalocker`, `colorama`, `tiktoken`
 
-**Node.js Dependencies (`package.json`):**
-```json
-{
-  "dependencies": {
-    "electron": "^38.0.0",
-    "openai": "^4.0.0",
-    "node-fetch": "^3.3.0",
-    "docx": "^8.5.0",
-    "pdfkit": "^0.14.0",
-    "puppeteer": "^21.0.0",
-    "marked": "^11.0.0",
-    "dompurify": "^3.0.0",
-    "isomorphic-dompurify": "^2.0.0",
-    "zod": "^3.22.0",
-    "node-machine-id": "^1.1.12",
-    "keytar": "^7.9.0",
-    "electron-updater": "^6.1.0",
-    "commander": "^11.0.0",
-    "exceljs": "^4.4.0",
-    "winston": "^3.11.0",
-    "dotenv": "^16.0.0"
-  },
-  "devDependencies": {
-    "electron-builder": "^24.9.0",
-    "typescript": "^5.4.0",
-    "@types/node": "^20.0.0",
-    "jest": "^29.7.0",
-    "eslint": "^8.56.0"
-  }
-}
-```
+Installation is handled by `npm run install-python`, which upgrades `pip`, removes conflicting TensorFlow packages, installs PyTorch CPU wheels from the official index, and then installs project dependencies.
 
-**Total Dependencies:**
-- Python: 25 packages
-- Node.js: 17 production, 5 development
-- Combined size: ~2.5 GB (with ML models)
+## Testing
+
+- Python unit and integration tests live alongside JavaScript suites under `tests/`.
+- After installing dependencies (`npm run install-python`), run `pytest` from the project root.
+- Automation suites documented in `AUTOMATION_SUITE_OVERVIEW.md` exercise the pipeline end-to-end.
+
+For implementation specifics, consult the individual scripts or the deep-dive documentation in `docs/` (e.g., `DOCUMENT_PROCESSING.md`, `CHAT_ARCHITECTURE.md`).

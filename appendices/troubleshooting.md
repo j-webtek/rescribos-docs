@@ -5,7 +5,7 @@
 **Common Issues:**
 
 **1. OpenAI API errors:**
-- Verify API key: `rescribos config get OPENAI_API_KEY`
+- Verify API key: `npm run cli -- config --show | Select-String OPENAI_API_KEY`
 - Check account balance at platform.openai.com
 - Test connectivity: `curl https://api.openai.com/v1/models -H "Authorization: Bearer sk-..."`
 

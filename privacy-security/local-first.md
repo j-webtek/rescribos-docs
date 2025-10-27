@@ -1,41 +1,35 @@
 # Local-First Architecture
 
-### 4.1 Local-First Architecture
+Rescribos keeps every artefact of the workflow on the operator’s machine unless explicitly exported.
 
-Rescribos is built on a **privacy-first, local-first** philosophy that gives users complete control over their data:
+## Storage Layout
 
-**Core Principles:**
-1. **Data Sovereignty** - All data stored locally on user's machine
-2. **No Vendor Lock-in** - Standard formats (JSON, Markdown, SQLite)
-3. **Transparent Processing** - Open Python scripts, auditable code
-4. **User-Controlled Keys** - BYOK model for API access
-5. **Minimal Telemetry** - Zero tracking in offline mode
-
-**Data Storage Locations:**
 ```
-C:\Users\[User]\AppData\Roaming\ai-news-extractor\
-├── storage/
-│   ├── reports/                    # All generated reports
-│   │   ├── report_[timestamp].json
-│   │   └── report_[timestamp].md
-│   ├── rejected/                   # Filtered-out stories
-│   │   └── error_stories.jsonl
-│   ├── embeddings.db               # SQLite vector database
-│   └── cart/                       # User-saved items
-│       └── cart_[id].json
-├── logs/                           # Application logs
-│   ├── extraction_[date].log
-│   └── error_[date].log
-└── config/                         # User preferences
-    └── settings.json
+<user-app-data>/ai-news-extractor/
+├─ storage/
+│  ├─ extracted/    # Raw story dumps
+│  ├─ analyzed/     # Summaries, scores, embeddings
+│  ├─ reports/      # Markdown + JSON exports
+│  ├─ embeddings/   # SQLite vector index
+│  └─ cart/         # Saved cart selections
+├─ logs/            # Extraction, analysis, and export logs
+└─ config/          # Preferences, profiles, cached settings
 ```
 
-**Data Flow:**
-```
-External Sources → Local Extraction → Local Storage → Local Analysis → Local Database
-       ↓                  ↓                  ↓                ↓               ↓
-  (Internet)        (Disk Write)       (JSON/MD)     (Python/Node)      (SQLite)
-       ↓                  ↓                  ↓                ↓               ↓
-  Encrypted          Atomic I/O         Standard       Open Source       No Cloud
-  Transport                             Formats
-```
+- All directories are created on first run; paths can be overridden via environment variables documented in `docs/ENVIRONMENT_REFERENCE.md`.
+- Exports are generated beside the source files so teams can back them up or version them with standard tooling.
+
+## Processing Guarantees
+
+- Atomic file writes and `.bak` fallbacks prevent corruption.
+- Pipelines append metadata (timestamps, provider names, configuration hashes) so audits can reproduce results.
+- Sensitive values (API keys, prompts) never leave the local machine unless the user shares them manually.
+
+## Benefits
+
+| Goal | Implementation |
+|------|----------------|
+| Data sovereignty | No third-party storage or telemetry. |
+| Portability | JSON/Markdown/SQLite formats import easily into other systems. |
+| Auditability | Open Python scripts and detailed logs allow full traceability. |
+| Compliance | Offline workflows support regulated and air-gapped deployments. |

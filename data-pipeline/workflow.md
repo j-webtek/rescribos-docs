@@ -1,50 +1,24 @@
 # Complete Workflow
 
-### 5.1 Complete Workflow Overview
+The end-to-end pipeline is composed of four stages. Each stage emits structured progress events and writes intermediate artefacts to disk.
 
-The Rescribos data pipeline consists of four primary stages, each with distinct responsibilities:
+1. **Extraction**
+   - Pulls from configured sources with concurrency control (`EXTRA_FETCH_CONCURRENCY`) and retry backoff.
+   - Filters stories by keyword lists, age (`MAX_STORY_AGE_HOURS`), and duplicate hashes.
+   - Saves raw output to `storage/extracted/`.
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                     STAGE 1: EXTRACTION                             │
-│  • Multi-source data collection (Hacker News, arXiv, local docs)   │
-│  • Concurrent fetching with rate limiting                          │
-│  • Basic filtering (keywords, age, duplicates)                     │
-│  • Optional AI pre-screening                                       │
-│  • Output: raw_stories.json (500-1000 items)                       │
-│  • Duration: 2-5 minutes                                            │
-└─────────────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────────┐
-│                     STAGE 2: ANALYSIS                               │
-│  • AI summarization (GPT-4o or Llama 3.1)                          │
-│  • Relevance scoring and filtering                                 │
-│  • Embedding generation (vector representations)                   │
-│  • Automated tagging (TF-IDF + AI)                                 │
-│  • Initial clustering (similarity-based)                           │
-│  • Output: analyzed_stories.json (200-500 items)                   │
-│  • Duration: 5-15 minutes                                           │
-└─────────────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────────┐
-│                     STAGE 3: ORGANIZATION                           │
-│  • Advanced clustering (hierarchical)                              │
-│  • Category identification                                         │
-│  • Story grouping and ranking                                      │
-│  • Section structure creation                                      │
-│  • Output: organized_report.json                                   │
-│  • Duration: 1-2 minutes                                            │
-└─────────────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────────┐
-│                   STAGE 4: THEMATIC SYNTHESIS                       │
-│  • Multi-order implications analysis                               │
-│  • Executive summary generation                                    │
-│  • Cross-section insights                                          │
-│  • Citation management                                             │
-│  • Output: thematic_report.md + .json                              │
-│  • Duration: 3-8 minutes                                            │
-└─────────────────────────────────────────────────────────────────────┘
-                            ↓
-                    [Final Report + Exports]
-```
+2. **Analysis**
+   - Runs summarisation, relevance scoring, embeddings, and tagging via the active AI provider.
+   - Applies deduplication thresholds and discard rules based on score and content quality.
+   - Persists analysed data to `storage/analyzed/`.
+
+3. **Organisation**
+   - Groups related stories into clusters, ranks results, and prepares them for thematic synthesis.
+   - Populates the cart and report builder with curated subsets.
+
+4. **Synthesis and Export**
+   - Generates Markdown and JSON reports with executive summaries, sections, and citations.
+   - Optional export workers create PDF and DOCX artefacts.
+   - Final reports live in `storage/reports/`.
+
+At every step the CLI and UI receive JSON progress updates, allowing cancellation and recovery without losing checkpoints.

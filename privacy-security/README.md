@@ -1,48 +1,37 @@
 # Privacy & Security
 
-### 4.1 Local-First Architecture
+Rescribos adopts a local-first design so teams can control data residency, credentials, and operational risk. This page summarises the approach described in `docs/SECURITY_ARCHITECTURE.md` and `CODE_PROTECTION_GUIDE.md`.
 
-Rescribos is built on a **privacy-first, local-first** philosophy that gives users complete control over their data:
+## Core Principles
 
-**Core Principles:**
-1. **Data Sovereignty** - All data stored locally on user's machine
-2. **No Vendor Lock-in** - Standard formats (JSON, Markdown, SQLite)
-3. **Transparent Processing** - Open Python scripts, auditable code
-4. **User-Controlled Keys** - BYOK model for API access
-5. **Minimal Telemetry** - Zero tracking in offline mode
+1. **Data stays local** – Reports, embeddings, logs, and configuration live on the operator’s machine unless explicitly exported.
+2. **Transparent processing** – Python and Node.js sources are included in the repository, enabling audits and custom reviews.
+3. **Bring your own keys** – API credentials are never bundled with the application; they are supplied by the user and stored securely on-device.
+4. **Minimal telemetry** – No usage analytics are collected. Network requests occur only when contacting chosen AI providers or data sources.
+5. **Configurable compliance** – Features such as offline mode and air-gapped licensing support regulated environments.
 
-**Data Storage Locations:**
+## Default Storage Layout
+
 ```
-C:\Users\[User]\AppData\Roaming\ai-news-extractor\
-├── storage/
-│   ├── reports/                    # All generated reports
-│   │   ├── report_[timestamp].json
-│   │   └── report_[timestamp].md
-│   ├── rejected/                   # Filtered-out stories
-│   │   └── error_stories.jsonl
-│   ├── embeddings.db               # SQLite vector database
-│   └── cart/                       # User-saved items
-│       └── cart_[id].json
-├── logs/                           # Application logs
-│   ├── extraction_[date].log
-│   └── error_[date].log
-└── config/                         # User preferences
-    └── settings.json
+<user-app-data>/ai-news-extractor/
+├─ storage/        # Extracted data, analysed results, reports, embeddings
+├─ logs/           # Rolling log files (setup, extraction, analysis, exports)
+├─ config/         # User preferences, profiles, cached settings
+└─ backups/        # Optional backups of key configuration files
 ```
 
-**Data Flow:**
-```
-External Sources → Local Extraction → Local Storage → Local Analysis → Local Database
-       ↓                  ↓                  ↓                ↓               ↓
-  (Internet)        (Disk Write)       (JSON/MD)     (Python/Node)      (SQLite)
-       ↓                  ↓                  ↓                ↓               ↓
-  Encrypted          Atomic I/O         Standard       Open Source       No Cloud
-  Transport                             Formats
-```
+All write operations use atomic saves to prevent corruption and leave an audit trail via timestamped files.
 
-## Sections
+## Threat Mitigations
+
+- Secrets handled by Keytar are never exposed to the renderer or written to disk.
+- IPC channels enforce validation using Zod schemas before commands execute.
+- Python processes strip environment variables that are not whitelisted before launching.
+- The document processing pipeline sanitises file paths and enforces size and extension allowlists.
+
+## Related Reading
 
 - [Local-First Architecture](local-first.md)
-- [Bring Your Own Keys (BYOK)](byok.md)
+- [Bring Your Own Keys](byok.md)
 - [License Management](license-management.md)
 - [Enterprise Compliance](compliance.md)

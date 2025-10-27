@@ -4,9 +4,10 @@ Rescribos serves diverse use cases across research, business intelligence, and c
 
 ## Primary Use Cases
 
-- Research Intelligence
-- Competitive Intelligence
-- Due Diligence
-- Content Curation
+- Research intelligence
+- Competitive intelligence
+- Due diligence
+- Content curation
 
-[View detailed examples →](examples.md)
+[View detailed examples](examples.md)
+

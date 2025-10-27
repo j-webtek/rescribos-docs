@@ -1,107 +1,48 @@
 # Provider Implementation Details
 
-### 3.2 Provider Implementation Details
+Implementation specifics are captured in the Python modules under `scripts/`. This page summarises the interfaces and behaviours that consumers rely on.
 
-**OpenAI Integration (`src/python/openai_client.py`)**
+## OpenAI (`scripts/providers/openai_provider.py`)
 
-Core implementation pattern:
+- Accepts user-supplied API keys (stored via Keytar).
+- Supports text completion (`gpt-5`, `gpt-4.1`) and embeddings (`text-embedding-3-small`).
+- Applies retry logic with exponential backoff and jitter.
+- Tracks token usage and exposes metadata for logging.
+- Streams responses to the Node.js layer when chat mode is enabled.
+
+## Ollama (`scripts/providers/ollama_provider.py`)
+
+- Connects to the local Ollama daemon (default `http://127.0.0.1:11434`).
+- Uses models defined in the environment (commonly `llama3.1:8b` for summaries and `nomic-embed-text` for embeddings).
+- Performs health checks before each run to ensure the model is loaded.
+- Returns structured payloads that match the OpenAI provider interface for drop-in replacement.
+
+## Local Embeddings (`scripts/providers/local_embeddings.py`)
+
+- Falls back to SentenceTransformers (e.g., `all-MiniLM-L6-v2`) when no external provider is available.
+- Lazily loads models to avoid unnecessary startup costs.
+- Provides batched encoding methods optimised for CPU execution.
+
+## TF-IDF Summaries (`scripts/providers/tfidf_provider.py`)
+
+- Used as a last resort when no generative provider is available.
+- Generates extractive summaries and keyword lists from the source text.
+- Ensures the pipeline can still complete with reduced fidelity.
+
+## AI Provider Manager (`scripts/ai_providers/network_aware_manager.py`)
+
 ```python
-class OpenAIClient:
-    # Initialize with user's API key (BYOK)
-    # Configure model: gpt-4o, text-embedding-3-large
-    # generate_completion(messages) -> response with retry logic (3 attempts)
-    # Handle rate limits with exponential backoff
-    # Support streaming for real-time chat
+from scripts.ai_providers.network_aware_manager import network_aware_manager
+
+async with network_aware_manager.operation_context("summary"):
+    result = await network_aware_manager.generate_text_with_fallback(
+        prompt_template,
+        model="gpt-5",
+    )
 ```
 
-**Features:**
-- User-provided API keys (BYOK model)
-- Automatic rate limit handling (exponential backoff)
-- Streaming support for real-time responses
-- Token usage tracking and optimization
-- Model version flexibility (GPT-4, GPT-4o, GPT-3.5-turbo)
+- Evaluates connectivity, configuration overrides, and provider health before each call.
+- Allows separate providers for different task types (text vs embeddings) and automatically falls back when failures occur.
+- Emits detailed log entries when falling back or encountering errors.
 
-**Ollama Integration (`src/python/ollama_client.py`)**
-
-Core implementation pattern:
-```python
-class OllamaClient:
-    # Connect to local Ollama server (localhost:11434)
-    # is_available() -> health check for service
-    # generate(prompt, system_prompt) -> local completion
-    # Support models: llama3.1:8b, mistral, nomic-embed-text
-```
-
-**Features:**
-- Fully local execution (no internet required)
-- Zero-cost operation (no API fees)
-- Support for multiple models (Llama, Mistral, etc.)
-- Privacy-preserving (data never leaves machine)
-- Requires ~8GB RAM for 8B parameter models
-
-**Local Fallback Models (`src/python/local_embeddings.py`)**
-
-Core implementation pattern:
-```python
-class LocalEmbeddingProvider:
-    # Use SentenceTransformers: all-MiniLM-L6-v2 (384-dim)
-    # Lazy load model on first use
-    # encode(texts) -> numpy embeddings array
-    # CPU/GPU auto-detection, batch processing
-```
-
-**Features:**
-- CPU-based operation (GPU optional)
-- ~200MB model download (one-time)
-- 384-dimensional vectors
-- TF-IDF and hash-based alternatives
-- No external dependencies
-
-### 3.3 Network-Aware Provider Selection
-
-The `AIProviderManager` class (`src/python/ai_manager.py`) orchestrates intelligent provider selection:
-
-**Selection Logic:**
-```python
-class AIProviderManager:
-    def select_provider(self, task_type: str) -> AIProvider:
-        """Intelligent provider selection based on context"""
-
-        # Check network connectivity
-        is_online = self.check_network()
-
-        # Priority 1: User has OpenAI key and is online
-        if is_online and self.has_openai_key():
-            if self.test_openai_connection():
-                return self.openai_provider
-
-        # Priority 2: Ollama is running locally
-        if self.ollama_available():
-            return self.ollama_provider
-
-        # Priority 3: Local fallback models
-        if task_type == 'embedding':
-            return self.local_embedding_provider
-        elif task_type == 'summarization':
-            return self.tfidf_summarizer
-        else:
-            raise NoProviderAvailableError()
-
-    def check_network(self) -> bool:
-        """Test internet connectivity"""
-        try:
-            socket.create_connection(("8.8.8.8", 53), timeout=2)
-            return True
-        except OSError:
-            return False
-```
-
-**Decision Matrix:**
-
-| Scenario | Network | OpenAI Key | Ollama | Provider Used |
-|----------|---------|------------|--------|---------------|
-| Ideal | Online | Yes | N/A | OpenAI API |
-| Offline | Offline | Yes | Running | Ollama |
-| No Key | Online | No | Running | Ollama |
-| Minimal | Offline | No | Not Running | Local Models |
-| Emergency | Any | No | Not Running | TF-IDF/Hash |
+The decision matrix and complete API reference are available in `docs/AI_PROVIDER_SYSTEM_DOCUMENTATION.md`.

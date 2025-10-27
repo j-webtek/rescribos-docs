@@ -1,84 +1,33 @@
 # Performance Metrics
 
-### 5.4 Performance Metrics
+Pipeline benchmarks vary with dataset size and chosen AI provider. Figures below reflect recent runs captured in `docs/AUTOMATION_TESTING_REPORT.md`.
 
-**Extraction Stage:**
-```
-Sources: Hacker News (top 500), arXiv (100 papers)
-Concurrent Requests: 5-10
-Rate Limiting: 100ms between requests
-Network Bandwidth: 50-100 MB download
-Processing Time: 2-5 minutes
-Success Rate: 95-98%
-Errors: Network timeouts, rate limits, parsing failures
-```
+## Extraction
 
-**Analysis Stage:**
-```
-Stories Processed: 200-500
-AI Provider: OpenAI GPT-4o (primary)
-Summarization Rate: 2-3 seconds per story
-Embedding Generation: 1-2 seconds per 100 stories
-Total AI API Costs: $0.50-$2.00 per full run (user's OpenAI account)
-Processing Time: 5-15 minutes
-CPU Usage: 20-40%
-Memory Usage: 500MB - 1GB
-```
+- Sources: up to 500 Hacker News items and 100 arXiv papers per run.
+- Throughput: 3–5 minutes with default concurrency (`EXTRA_FETCH_CONCURRENCY=5`).
+- Network footprint: roughly 40–80 MB.
+- Success rate: typically above 95%; failures are logged under `logs/extraction*.log`.
 
-**Organization Stage:**
-```
-Clustering Algorithm: Agglomerative + HDBSCAN
-Matrix Operations: Numpy/Scipy optimized
-Processing Time: 1-2 minutes
-CPU Usage: 60-80% (multi-core)
-Memory Usage: 300-500MB
-```
+## Analysis
 
-**Thematic Synthesis:**
-```
-AI Calls: 10-20 (section summaries + executive)
-Context Window: 8K-128K tokens per call
-Processing Time: 3-8 minutes
-Quality: PhD-level analysis depth
-Citations: 100% traceable
-```
+- Stories processed: 200–500 depending on filters.
+- Provider latency: 2–4 seconds per summary with GPT-5; 4–6 seconds using Ollama on modern laptops.
+- Embedding batches: 100 items per request; cached results minimise repeated calls.
+- Cost: $0.50–$2.00 USD for a full GPT-5 run billed directly to the user’s OpenAI account.
+- Resource usage: 20–40% CPU and up to 1 GB RAM on typical development machines.
 
-**Total Pipeline:**
-```
-End-to-End Time: 11-30 minutes
-Total Cost: $0.50-$2.00 (OpenAI usage)
-Output Size: 1-10 MB (all formats)
-Success Rate: 92-96%
-```
+## Organisation & Synthesis
 
-### 5.5 Error Handling and Recovery
+- Clustering and theme detection: 1–2 minutes leveraging NumPy/SciPy and `hdbscan`.
+- Thematic synthesis: 3–8 minutes depending on the number of sections and the prompt profile.
+- Output sizes: 0.5–5 MB for JSON, Markdown, and optional PDF/DOCX formats.
 
-**Retry Mechanisms:**
-```python
-async def fetch_with_retry(url, max_attempts=3):
-    for attempt in range(max_attempts):
-        try:
-            response = await fetch(url)
-            return response
-        except aiohttp.ClientError as e:
-            if attempt == max_attempts - 1:
-                log_error(f"Failed after {max_attempts} attempts: {url}")
-                write_to_error_log(url, str(e))
-                return None
-            await asyncio.sleep(2 ** attempt)  # Exponential backoff
-```
+## Reliability & Recovery
 
-**Error Logging:**
-```
-logs/
-├── extraction_20250115.log    # Source-specific errors
-├── analysis_20250115.log      # AI processing errors
-├── error_20250115.log         # General application errors
-└── performance_20250115.log   # Timing and metrics
-```
+- All network calls use exponential backoff and three retry attempts.
+- Errors are captured in `logs/` and summarised in `AUTOMATION_TESTING_REPORT.md`.
+- Pipeline stages are idempotent; rerunning a failed stage will reuse existing inputs and avoid duplicate outputs.
+- Provider failover automatically switches to fallback models when cloud services are unavailable.
 
-**Recovery Strategies:**
-- **Partial Success:** Continue with available data
-- **Provider Failover:** Switch to backup AI provider
-- **Checkpoint Saving:** Resume from last successful stage
-- **Error Reporting:** Detailed logs for troubleshooting
+For profiling guidance and advanced tuning options, see `docs/DEVELOPER_GUIDE_TESTING.md` and `docs/CODE_QUALITY_DETAILED_ANALYSIS.md`.
