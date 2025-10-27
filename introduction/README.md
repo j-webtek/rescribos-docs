@@ -53,9 +53,21 @@ Unlike rigid SaaS tools locked to specific data sources, Rescribos is a configur
 **Common Thread:**
 Organizations that need to process high-volume information streams, maintain data sovereignty, and generate actionable intelligence—without being constrained by vendor-defined data sources or cloud-only SaaS platforms.
 
+## Product Vision & Roadmap
+
+Rescribos is rapidly evolving to become the **universal intelligence platform** that connects to any data source, processes through any AI provider, and delivers insights in any format.
+
+**Upcoming Integrations:**
+- Social media platforms: X (Twitter), YouTube, TikTok, Instagram, LinkedIn, Reddit
+- AI providers: Claude, Gemini, Mistral, Cohere, Amazon Bedrock, Azure OpenAI
+- Advanced features: Multi-modal analysis, cross-platform correlation, predictive analytics
+
+See the complete [Product Roadmap](../ROADMAP.md) for detailed plans and timelines.
+
 ## Where to Go Next
 
 - Review the [at-a-glance snapshot](at-a-glance.md) for metrics and workflow highlights.
 - Understand the [full value proposition](value-proposition.md) by persona and deployment model.
+- Explore the [product roadmap](../ROADMAP.md) to see upcoming features and integrations.
 - Dig into the [system architecture](../architecture/README.md) to see how the tiers interact.
 - Jump to [deployment options](../deployment/README.md) for installation guidance.

@@ -39,6 +39,16 @@ Rescribos includes web scraping capabilities for content extraction. **Users are
 
 See [Responsible Data Collection](core-capabilities/data-extraction.md#responsible-data-collection) for comprehensive guidelines on ethical scraping practices.
 
+## Product Roadmap
+
+See [Roadmap](ROADMAP.md) for our vision and development plans:
+- **Phase 1**: Social media connectors (X, YouTube, TikTok, Instagram, LinkedIn, Reddit)
+- **Phase 2**: AI provider expansion (Claude, Gemini, Mistral, Cohere, Bedrock)
+- **Phase 3**: Advanced intelligence features (multi-modal analysis, predictive analytics)
+- **Phase 4**: Enterprise collaboration and API platform
+
+**Vision:** Position Rescribos as the universal intelligence platform connecting any data source with any AI provider.
+
 ## Documentation Map
 
 - **Orientation** - [Executive Summary](introduction/README.md), [At a Glance](introduction/at-a-glance.md), and [Value Proposition](introduction/value-proposition.md).

@@ -1,6 +1,7 @@
 # Table of contents
 
 * [Introduction](README.md)
+* [Product Roadmap](ROADMAP.md)
 
 ## Getting Started
 
