@@ -2,44 +2,74 @@
 
 ## Overview
 
-Rescribos automatically collects content from diverse sources, applying AI-driven filtering to ensure relevance. The multi-source extraction system provides a flexible, configurable architecture for gathering AI-related content from news sources, research repositories, government databases, and local documents.
+Rescribos provides a flexible, extensible data extraction framework that connects to any information source your organization needs. Unlike rigid tools locked to vendor-defined sources, the platform's connector architecture adapts to YOUR data ecosystem—whether that's internal databases, proprietary APIs, industry-specific feeds, or public repositories.
 
-## Supported Data Sources
+**Key Principle:** The value of Rescribos lies in its AI-powered analysis pipeline and knowledge management capabilities, not in predefined data sources. Organizations configure the platform to connect to sources relevant to their specific needs.
 
-### Built-in Sources
+## Data Source Architecture
 
-**1. Hacker News** (Enabled by default)
-- Real-time technology news and AI discussions
-- Firebase API integration for story retrieval
-- Configurable story limits (default: 30 per request)
-- Age-based filtering (default: 36 hours)
-- Full article content extraction from linked URLs
-- Rate limit: 100 requests/hour
+### Connector Framework
 
-**2. arXiv** (Enabled by default)
-- Academic research papers in AI/ML categories
-- Categories: cs.AI, cs.LG, cs.CL, cs.CV
-- Full metadata: DOI, authors, citations, abstracts
-- Configurable result limits (default: 50 per category)
-- Sort by submission date or relevance
-- Rate limit: 50 requests/hour
+The platform uses a **plugin-based connector system** that abstracts data source complexity:
 
-**3. USASpending.gov** (Enabled by default)
-- Federal government contract awards and transactions
-- AI-related contract opportunities and spending data
-- Award types: contracts, grants, loans, direct payments
-- Context enrichment with prime award information
-- Configurable lookback periods (default: 7 days)
-- Rate limit: 1000 requests/hour
+- **Source-Agnostic Pipeline**: The analysis engine doesn't care where data comes from—REST API, database query, RSS feed, or file system
+- **Standardized Interface**: All connectors implement a common interface, ensuring consistent behavior
+- **Hot-Swappable**: Enable, disable, or replace sources without code changes
+- **Parallel Execution**: Multiple sources fetch concurrently with intelligent rate limiting
+- **Error Isolation**: Source failures don't cascade; the pipeline continues with available data
 
-**4. SAM.gov** (Disabled by default, configurable)
-- System for Award Management procurement data
-- Government contract opportunities and solicitations
-- NAICS code filtering for tech/AI sectors
-- AI keyword matching with 300+ term dictionary
-- Notice types: Presolicitation, Solicitation, Combined Synopsis
-- Rate limit: 1000 requests/day
-- Requires API key (register at SAM.gov)
+### Creating Custom Connectors
+
+**Three Approaches:**
+
+1. **Configuration-Based** (No Code Required)
+   - Edit `config/data_sources.json` to add REST APIs, RSS feeds, or GraphQL endpoints
+   - Specify authentication, rate limits, and filtering rules
+   - Platform handles HTTP, pagination, retries, and error recovery
+
+2. **Template-Based** (Minimal Code)
+   - Run `python scripts/create_datasource.py` for guided connector generation
+   - Answer prompts about your source (API endpoint, auth type, response format)
+   - Generated Python class handles 90% of integration work
+
+3. **Custom Implementation** (Full Control)
+   - Implement `DataSource` base class for complex sources
+   - Custom extraction logic, authentication flows, and data transformation
+   - Full access to platform utilities (caching, logging, deduplication)
+
+See [API Data Source Integration Guide](../docs/API_DATASOURCE_INTEGRATION_GUIDE.md) for complete implementation details.
+
+## Included Reference Sources
+
+The platform ships with **example connectors** that demonstrate the framework's capabilities. These are **starting points**, not limitations—organizations typically replace or supplement them with domain-specific sources.
+
+### Pre-Configured Examples
+
+**Hacker News Connector** (Technology News)
+- **Purpose**: Demonstrates public REST API integration with content extraction
+- **Use Case**: Technology monitoring, developer community trends
+- **Replaceability**: Replace with your industry news aggregator, internal news feed, or competitive intel sources
+- **Configuration**: Firebase API endpoint, story limits, age filtering, full-text extraction
+
+**arXiv Connector** (Academic Research)
+- **Purpose**: Demonstrates research database integration with metadata handling
+- **Use Case**: Academic literature monitoring, research trend analysis
+- **Replaceability**: Replace with PubMed, IEEE Xplore, SSRN, internal research repositories, or patent databases
+- **Configuration**: Category filters, result limits, citation extraction, DOI handling
+
+**USASpending Connector** (Government Contracts)
+- **Purpose**: Demonstrates complex API with nested data and context enrichment
+- **Use Case**: Government contract monitoring, procurement intelligence
+- **Replaceability**: Replace with private sector contract databases, RFP aggregators, or industry-specific procurement feeds
+- **Configuration**: Award types, lookback periods, transaction filtering, prime award context
+
+**SAM.gov Connector** (Government Opportunities)
+- **Purpose**: Demonstrates authenticated API with keyword filtering and NAICS codes
+- **Use Case**: Federal opportunity tracking, solicitation monitoring
+- **Replaceability**: Replace with state/local procurement systems, international tenders, or private sector opportunity feeds
+- **Configuration**: API authentication, keyword dictionaries, notice types, NAICS filtering
+
+**Key Point:** These connectors demonstrate the platform's capabilities. Most organizations disable or replace them with sources specific to their domain—whether that's financial data feeds, legal databases, healthcare information systems, competitive intelligence sources, or internal document repositories.
 
 ### Additional Content Sources
 

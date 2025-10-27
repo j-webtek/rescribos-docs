@@ -1,26 +1,31 @@
-﻿# Rescribos Data Refinement (AI News Extractor)
+﻿# Rescribos Data Refinement
 
-Rescribos Data Refinement is a cross-platform desktop application that automates the collection, analysis, and synthesis of AI-related news. The platform combines an Electron front end, a Node.js orchestration layer, and a Python processing pipeline to deliver curated reports, semantic search, and interactive analysis without handing data to third-party services.
+Rescribos Data Refinement is a cross-platform desktop application that transforms how organizations collect, analyze, and synthesize information from any source. The platform combines an Electron front end, a Node.js orchestration layer, and a Python processing pipeline to deliver curated reports, semantic search, and interactive analysis—all without handing data to third-party services.
 
 ## Platform Highlights
 
-- Local-first storage for reports, logs, and configuration with optional cloud calls only for selected AI providers
-- Bring-your-own-keys model that keeps cost control and credentials in the hands of the operator
-- Hybrid AI execution that can switch between OpenAI GPT-5, Ollama Llama 3.1, or transformers-based fallbacks
-- Multi-source extraction covering Hacker News, arXiv, optional US public procurement feeds, and local document ingestion. Additional connectors can be generated with the data source template for REST/RSS/GraphQL APIs.
-- Rich analysis pipeline with summarisation, relevance scoring, deduplication, clustering, and tag generation
-- Semantic vector search, cart-based batching, and a conversational assistant backed by the analysed corpus
-- CLI and automation hooks for scheduled jobs, smoke tests, and integration into existing workflows
+**Your Data, Your Sources, Your Control:**
+- **Flexible Data Ingestion** – Connect to any data source: APIs, RSS feeds, databases, document repositories, web scraping, or custom connectors
+- **Local-First Architecture** – All content, analysis, and reports stored on your infrastructure with optional cloud AI processing
+- **Bring-Your-Own-Keys Model** – Complete cost control and credential ownership; pay AI providers directly at cost
+- **Hybrid AI Execution** – Switch seamlessly between OpenAI GPT-5, Ollama Llama 3.1, or transformer-based fallbacks
+- **AI-Powered Analysis Pipeline** – Automated summarization, relevance scoring, deduplication, clustering, and tag generation
+- **Semantic Knowledge Management** – Vector search, conversational AI assistant, and intelligent document discovery
+- **Enterprise Automation** – CLI tools, scheduling, and integration hooks for systematic workflows
+
+**Included Example Data Sources:**
+The platform includes pre-configured connectors for Hacker News, arXiv, USASpending.gov, and SAM.gov as reference implementations. These demonstrate the platform's capabilities and can be easily replaced or supplemented with your organization's specific data sources using the extensible connector framework.
 
 ## How the System Works
 
-1. **Extract** - Collect stories from configured sources with concurrency limits, retry policies, and deduplication.
-2. **Analyse** - Execute Python-based summarisation, tagging, and impact scoring through the selected AI provider.
-3. **Organise** - Group stories into themes, collapse duplicates, and generate embeddings for semantic lookup.
-4. **Synthesize** - Produce Markdown, JSON, and PDF outputs with executive summaries and streamlined citations.
-5. **Explore** - Use the desktop UI, semantic search, or chat assistant to interrogate the generated knowledge base.
+1. **Connect** - Configure data sources relevant to your organization (news feeds, research databases, internal documents, APIs, etc.)
+2. **Extract** - Automated collection with concurrency control, retry policies, and intelligent deduplication
+3. **Analyze** - AI-powered summarization, relevance scoring, tagging, and impact assessment
+4. **Organize** - Thematic grouping, duplicate collapse, and semantic embedding generation
+5. **Synthesize** - Generate reports in multiple formats (Markdown, JSON, PDF, DOCX) with executive summaries
+6. **Explore** - Query your knowledge base through semantic search, interactive AI chat, or the desktop interface
 
-The same pipeline is exposed through the CLI (`npm run cli -- <command>`) and can be orchestrated from scheduled jobs or CI environments.
+The entire pipeline is accessible through both the desktop UI and CLI, enabling automated workflows, scheduled jobs, and CI/CD integration.
 
 ## Documentation Map
 
