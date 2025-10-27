@@ -67,7 +67,7 @@ Rescribos semantic search translates natural language queries into vector embedd
 - **Advanced filtering** with metadata indexes
 
 **Setup:**
-See [PostgreSQL Quickstart](../../../POSTGRES_QUICKSTART.md) for 5-minute setup guide.
+See [PostgreSQL Quickstart](../reference-guides/POSTGRES_QUICKSTART.md) for 5-minute setup guide.
 
 **Migration:**
 Existing SQLite embeddings can be migrated to PostgreSQL without data loss.
@@ -285,15 +285,16 @@ npm run cli -- search "query text" --format json
 - Try keyword search as fallback
 
 **Migration issues:**
-- See [PostgreSQL Migration Guide](../../../PGVECTOR_MIGRATION_GUIDE.md)
+- See [PostgreSQL Migration Guide](../reference-guides/PGVECTOR_MIGRATION_GUIDE.md)
 - Backup SQLite database before migration
 - Test connection before starting migration
 - Monitor progress logs during migration
 
 ## Related Documentation
 
-- [Semantic Search Improvements](../../../SEMANTIC_SEARCH_IMPROVEMENTS.md) - Technical deep dive
-- [Semantic Search Usage](../../../SEMANTIC_SEARCH_USAGE.md) - Complete usage guide
-- [PostgreSQL Quickstart](../../../POSTGRES_QUICKSTART.md) - PostgreSQL setup
+- [Semantic Search Improvements](../reference-guides/SEMANTIC_SEARCH_IMPROVEMENTS.md) - Technical deep dive
+- [Semantic Search Usage](../reference-guides/SEMANTIC_SEARCH_USAGE.md) - Complete usage guide
+- [PostgreSQL Quickstart](../reference-guides/POSTGRES_QUICKSTART.md) - PostgreSQL setup
+- [PostgreSQL Migration Guide](../reference-guides/PGVECTOR_MIGRATION_GUIDE.md) - Migration from SQLite
 - [Document Library](../advanced-features/document-library.md) - UI integration
 - [Interactive AI Chat](ai-chat.md) - Chat integration

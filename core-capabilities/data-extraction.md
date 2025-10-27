@@ -37,7 +37,7 @@ The platform uses a **plugin-based connector system** that abstracts data source
    - Custom extraction logic, authentication flows, and data transformation
    - Full access to platform utilities (caching, logging, deduplication)
 
-See [API Data Source Integration Guide](../docs/API_DATASOURCE_INTEGRATION_GUIDE.md) for complete implementation details.
+See [API Data Source Integration Guide](../reference-guides/API_DATASOURCE_INTEGRATION_GUIDE.md) for complete implementation details.
 
 ## Included Reference Sources
 
@@ -231,7 +231,7 @@ python scripts/create_datasource.py \
 - GraphQL endpoints
 - Custom Python implementations
 
-See [API Data Source Integration Guide](../docs/API_DATASOURCE_INTEGRATION_GUIDE.md) for detailed instructions.
+See [API Data Source Integration Guide](../reference-guides/API_DATASOURCE_INTEGRATION_GUIDE.md) for detailed instructions.
 
 ## Performance Metrics
 
@@ -418,7 +418,7 @@ CONTENT_EXTRACTION_TIMEOUT=15       # Allow sites time to respond
 
 ## See Also
 
-- [Multi-Source Extraction Guide](../docs/MULTI_SOURCE_EXTRACTION_GUIDE.md) - Advanced multi-source configuration
-- [API Data Source Integration](../docs/API_DATASOURCE_INTEGRATION_GUIDE.md) - Custom connector development
+- [Multi-Source Extraction Guide](../reference-guides/MULTI_SOURCE_EXTRACTION_GUIDE.md) - Advanced multi-source configuration
+- [API Data Source Integration](../reference-guides/API_DATASOURCE_INTEGRATION_GUIDE.md) - Custom connector development
 - [Data Pipeline Workflow](../data-pipeline/workflow.md) - Complete extraction → analysis flow
 - [Configuration Guide](../deployment/configuration.md) - All configuration options

@@ -76,6 +76,15 @@
   * [Deployment Models](licensing/deployment-models.md)
   * [FAQs](licensing/faqs.md)
 
+## Reference Guides
+
+* [API Data Source Integration](reference-guides/API_DATASOURCE_INTEGRATION_GUIDE.md)
+* [Multi-Source Extraction](reference-guides/MULTI_SOURCE_EXTRACTION_GUIDE.md)
+* [PostgreSQL Quickstart](reference-guides/POSTGRES_QUICKSTART.md)
+* [PostgreSQL Migration Guide](reference-guides/PGVECTOR_MIGRATION_GUIDE.md)
+* [Semantic Search Improvements](reference-guides/SEMANTIC_SEARCH_IMPROVEMENTS.md)
+* [Semantic Search Usage](reference-guides/SEMANTIC_SEARCH_USAGE.md)
+
 ## Appendices
 
 * [File Path Reference](appendices/file-path-reference.md)
