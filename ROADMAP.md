@@ -37,7 +37,7 @@ The roadmap focuses on three strategic pillars:
 
 ---
 
-## Phase 1: Social Media & Video Platforms (Q1-Q2 2025)
+## Phase 1: Social Media & Video Platforms (Q1-Q2 2026)
 
 ### New Data Source Connectors
 
@@ -135,7 +135,7 @@ The roadmap focuses on three strategic pillars:
 
 ---
 
-## Phase 2: AI Provider Expansion (Q2-Q3 2025)
+## Phase 2: AI Provider Expansion (Q2-Q3 2026)
 
 ### Additional AI Provider Integrations
 
@@ -226,7 +226,7 @@ The roadmap focuses on three strategic pillars:
 
 ---
 
-## Phase 3: Advanced Intelligence Features (Q3-Q4 2025)
+## Phase 3: Advanced Intelligence Features (Q3-Q4 2026)
 
 ### Enhanced Analysis Capabilities
 
@@ -291,7 +291,7 @@ The roadmap focuses on three strategic pillars:
 
 ---
 
-## Phase 4: Enterprise & Collaboration (Q4 2025 - Q1 2026)
+## Phase 4: Enterprise & Collaboration (Q4 2026 - Q1 2027)
 
 ### Team Collaboration
 
@@ -335,7 +335,7 @@ The roadmap focuses on three strategic pillars:
 
 ---
 
-## Long-Term Vision (2026+)
+## Long-Term Vision (2027+)
 
 ### Universal Intelligence Platform
 
@@ -375,7 +375,7 @@ The roadmap focuses on three strategic pillars:
 
 ## Implementation Priorities
 
-### Near-Term Focus (Next 6 Months)
+### Near-Term Focus (Next 6 Months - H1 2026)
 
 **Must Have:**
 1. X (Twitter) Connector - High demand, immediate value
@@ -388,7 +388,7 @@ The roadmap focuses on three strategic pillars:
 6. Reddit Connector - Community intelligence
 7. Mistral AI Integration - EU compliance option
 
-### Medium-Term Focus (6-12 Months)
+### Medium-Term Focus (6-12 Months - H2 2026)
 
 **Priority Features:**
 1. Multi-modal analysis (images, video, audio)
@@ -397,7 +397,7 @@ The roadmap focuses on three strategic pillars:
 4. Enhanced chat with tool use and web search
 5. Team collaboration features
 
-### Long-Term Focus (12+ Months)
+### Long-Term Focus (12+ Months - 2027+)
 
 **Strategic Initiatives:**
 1. Intelligence marketplace and community ecosystem
@@ -510,4 +510,4 @@ This roadmap is a living document updated quarterly based on:
 ---
 
 *Last Updated: October 2025*
-*Next Review: January 2026*
+*Next Review: April 2026*
