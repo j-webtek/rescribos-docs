@@ -27,6 +27,18 @@ The platform includes pre-configured connectors for Hacker News, arXiv, USASpend
 
 The entire pipeline is accessible through both the desktop UI and CLI, enabling automated workflows, scheduled jobs, and CI/CD integration.
 
+## Responsible Use Notice
+
+Rescribos includes web scraping capabilities for content extraction. **Users are responsible for ensuring legal and ethical use** of these features:
+
+- ✅ Verify authorization to access configured data sources
+- ✅ Respect robots.txt directives and website Terms of Service
+- ✅ Configure appropriate rate limits to avoid server overload
+- ✅ Be aware that aggressive scraping may result in IP bans
+- ✅ Prefer official APIs over scraping when available
+
+See [Responsible Data Collection](core-capabilities/data-extraction.md#responsible-data-collection) for comprehensive guidelines on ethical scraping practices.
+
 ## Documentation Map
 
 - **Orientation** - [Executive Summary](introduction/README.md), [At a Glance](introduction/at-a-glance.md), and [Value Proposition](introduction/value-proposition.md).

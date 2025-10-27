@@ -38,6 +38,39 @@ npm run cli -- search "foundation model licensing" --limit 15
 
 See `docs/cli.md` for the full command reference.
 
+## Responsible Data Collection Configuration
+
+When configuring data sources that use web scraping, follow these guidelines:
+
+**Conservative Rate Limiting:**
+```env
+# Recommended for public web scraping
+MAX_CONCURRENT_REQUESTS=2
+RETRY_COUNT=1
+EXTRA_FETCH_CONCURRENCY=2
+CONTENT_EXTRACTION_TIMEOUT=15
+```
+
+**Per-Source Configuration in `config/data_sources.json`:**
+```json
+{
+  "global_config": {
+    "concurrent_sources": 2,
+    "retry_attempts": 1,
+    "timeout": 30
+  }
+}
+```
+
+**Best Practices:**
+- ✅ Check robots.txt before configuring a website as a source
+- ✅ Use official APIs instead of scraping when available
+- ✅ Configure appropriate delays and rate limits
+- ✅ Monitor logs for rate limit errors (HTTP 429, 403)
+- ✅ Be aware that aggressive scraping may result in IP bans
+
+See [Responsible Data Collection](../core-capabilities/data-extraction.md#responsible-data-collection) for comprehensive guidelines.
+
 ## Scheduling Examples
 
 - **Cron (Linux/macOS)**

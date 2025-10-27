@@ -276,6 +276,146 @@ See [API Data Source Integration Guide](../docs/API_DATASOURCE_INTEGRATION_GUIDE
 - Lower values = stricter deduplication
 - Default: 0.85 (85% similar)
 
+## Responsible Data Collection
+
+### Web Scraping Capabilities
+
+Rescribos includes web scraping functionality for extracting content from public websites. This capability uses:
+
+- **HTTP requests** with BeautifulSoup for HTML parsing
+- **Browser automation** (Playwright) for JavaScript-heavy sites
+- **Domain-specific extractors** optimized for common news sites
+- **Anti-bot evasion** techniques for sites with protection mechanisms
+
+**Important:** With these capabilities comes the responsibility to use them ethically and legally.
+
+### Legal and Ethical Considerations
+
+**robots.txt Compliance:**
+- The platform does NOT automatically check or enforce robots.txt rules
+- **User responsibility**: You must manually verify robots.txt compliance for websites you scrape
+- Check `https://example.com/robots.txt` before configuring that domain as a source
+- Respect Disallow directives and crawl-delay settings
+- Some sites explicitly prohibit automated access—honor these restrictions
+
+**Rate Limiting and Server Load:**
+- **Default settings** use concurrent requests which can stress servers
+- **Configure responsibly**: Reduce `concurrent_sources` and `MAX_CONCURRENT_REQUESTS` for smaller sites
+- **Add delays**: Use rate limits in `config/data_sources.json` to space requests appropriately
+- **Monitor errors**: High error rates may indicate you're overwhelming the target server
+- **Consider off-peak hours**: Schedule extractions during low-traffic periods when possible
+
+**IP Blocking Risks:**
+- Aggressive scraping can result in **temporary or permanent IP bans**
+- Sites with anti-bot protection may block your IP, VPN, or entire subnet
+- **Corporate/institutional users**: IP bans may affect your entire organization
+- **Residential users**: ISP may flag or restrict your connection
+- **No workaround support**: The platform does not provide proxy rotation or ban circumvention
+
+### Best Practices for Responsible Scraping
+
+**1. Prefer Official APIs**
+- Always use official APIs when available (even if paid)
+- APIs are explicitly authorized, documented, and rate-limited appropriately
+- Scraping should be a last resort, not the first choice
+
+**2. Review Terms of Service**
+- Read and comply with website Terms of Service before scraping
+- Some sites explicitly prohibit automated access, even if robots.txt allows it
+- Commercial use of scraped data may require licensing or permission
+
+**3. Configure Conservative Defaults**
+```json
+{
+  "global_config": {
+    "concurrent_sources": 2,        // Reduce concurrent requests
+    "timeout": 30,                  // Generous timeout
+    "retry_attempts": 1,            // Limit retries
+    "content_extraction_timeout": 15
+  }
+}
+```
+
+**4. Implement Polite Delays**
+- Add delays between requests to the same domain
+- Use rate_limit configuration to enforce request spacing
+- Consider `User-Agent` headers that identify your organization
+
+**5. Cache Aggressively**
+- Enable content caching to avoid repeated requests for same content
+- Use deduplication to prevent re-fetching known articles
+- Store extracted content locally rather than re-scraping
+
+**6. Monitor and Respond**
+- Watch logs for HTTP 429 (Too Many Requests) or 403 (Forbidden) responses
+- If you receive rate limit errors, **immediately reduce your request rate**
+- Persistent errors may indicate you're not welcome—respect that
+
+**7. Consider Legal Implications**
+- Some jurisdictions have laws against unauthorized data access (e.g., CFAA in US)
+- Scraping copyrighted content may have legal implications
+- Consult legal counsel if using scraped data commercially
+- Be aware of GDPR, CCPA, and other privacy regulations
+
+### Configuration for Responsible Use
+
+**Recommended Settings for Public Web Scraping:**
+
+```env
+# Conservative extraction settings
+MAX_CONCURRENT_REQUESTS=2           # Limit parallel requests
+RETRY_COUNT=1                       # Reduce retry attempts
+EXTRA_FETCH_CONCURRENCY=2           # Limit content extraction concurrency
+NETWORK_CHECK_TIMEOUT=15            # Generous timeout
+
+# Content extraction
+CONTENT_EXTRACTION_TIMEOUT=15       # Allow sites time to respond
+```
+
+**Per-Source Rate Limits in data_sources.json:**
+
+```json
+{
+  "name": "custom_news_site",
+  "config": {
+    "max_items": 10,               // Limit items per fetch
+    "request_delay_seconds": 2     // Delay between requests
+  },
+  "rate_limit": {
+    "requests": 30,                // Conservative limit
+    "per": "hour"                  // Spread requests over time
+  }
+}
+```
+
+### When to Avoid Web Scraping
+
+**Do NOT scrape if:**
+- robots.txt explicitly disallows your use case
+- Terms of Service prohibit automated access
+- Site provides an official API (use that instead)
+- Content is behind authentication/paywall (likely unauthorized)
+- Site displays anti-scraping measures (CAPTCHAs, rate limiting)
+- You lack authorization for commercial use of the data
+
+**Alternative Approaches:**
+- Request API access from the site owner
+- Use licensed data providers or aggregators
+- Partner with the content owner for authorized access
+- Focus on sources that explicitly allow automated access
+
+### User Responsibility Statement
+
+**The Rescribos platform provides web scraping as a technical capability. The responsibility for legal, ethical, and authorized use rests entirely with the user/organization deploying the platform.**
+
+- Verify you have authorization to access and collect data from configured sources
+- Ensure compliance with applicable laws and regulations in your jurisdiction
+- Respect website terms of service, robots.txt directives, and rate limits
+- Monitor for and respond to blocking or rate limiting signals
+- Accept liability for any IP bans, legal issues, or other consequences of scraping activities
+
+**The platform developers assume no liability for user-configured data sources or scraping activities. Users must exercise due diligence and good faith in configuring data collection.**
+
 ## See Also
 
 - [Multi-Source Extraction Guide](../docs/MULTI_SOURCE_EXTRACTION_GUIDE.md) - Advanced multi-source configuration
